@@ -1,7 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import model from "../models/model";
-import mongoose, { ObjectId } from "mongoose";
-import { match } from "assert";
+import mongoose, { Schema } from "mongoose";
 import api from "../../api.json";
 const router = express.Router();
 
@@ -46,10 +45,10 @@ router.post("/new-user", (req: Request, res: Response, next: NextFunction) => {
     });
     const dataToSave = data
       .save()
-      .then((data) => {
-        res.status(201).json(dataToSave);
+      .then((result) => {
+        res.status(201).json(result);
       })
-      .catch((error) => {
+      .catch((error: Error) => {
         next(error);
       });
   } catch (error) {
@@ -105,7 +104,6 @@ router.get(
       });
       res.status(200).json(filt);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }

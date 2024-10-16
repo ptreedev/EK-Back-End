@@ -20,7 +20,6 @@ function seed() {
         try {
             yield model_1.default.deleteMany();
             yield model_1.default.insertMany(usertestdata_json_1.default);
-            console.log("dataInserted");
         }
         catch (error) {
             console.log(error);

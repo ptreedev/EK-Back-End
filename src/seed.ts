@@ -5,7 +5,6 @@ export default async function seed() {
   try {
     await model.deleteMany();
     await model.insertMany(data);
-    console.log("dataInserted");
   } catch (error) {
     console.log(error);
   }

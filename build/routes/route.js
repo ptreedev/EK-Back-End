@@ -52,8 +52,8 @@ router.post("/new-user", (req, res, next) => {
         });
         const dataToSave = data
             .save()
-            .then((data) => {
-            res.status(201).json(dataToSave);
+            .then((result) => {
+            res.status(201).json(result);
         })
             .catch((error) => {
             next(error);
@@ -103,7 +103,6 @@ router.get("/likes/:user_id", (req, res, next) => __awaiter(void 0, void 0, void
         res.status(200).json(filt);
     }
     catch (error) {
-        console.log(error);
         next(error);
     }
 }));

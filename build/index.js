@@ -37,6 +37,7 @@ app.use((error, req, res, next) => {
 });
 app.use((error, req, res, next) => {
     if (error.name === "SyntaxError") {
+        console.log(error);
         res.status(400).json({ message: "Please Enter the Data Correctly" });
     }
     else {
