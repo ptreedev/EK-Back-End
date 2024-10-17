@@ -23,7 +23,12 @@ app.use(express.json());
 app.use(`/api`, routes);
 
 app.all("*", (req: Request, res: Response) => {
-  res.status(404).send({ msg: "URL not found" });
+  res.status(404).send({ message: "URL not found" });
+});
+
+app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+  console.log(error)
+  res.status(404).send(error)
 });
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
@@ -44,7 +49,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
 });
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   if (error.name === "ValidationError") {
-    res.status(400).json({ message: "Missing Required Fields" });
+    res.status(400).json({message: "Invalid request, missing Required Fields"});
   } else {
     next(error);
   }

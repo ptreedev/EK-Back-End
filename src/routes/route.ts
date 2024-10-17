@@ -34,7 +34,7 @@ router.post(
   }
 );
 //post a new user
-router.post("/new-user", (req: Request, res: Response, next: NextFunction) => {
+router.post("/new-user", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = new model({
       name: req.body.name,
@@ -43,14 +43,8 @@ router.post("/new-user", (req: Request, res: Response, next: NextFunction) => {
       address: req.body.address,
       matches: req.body.matches,
     });
-    const dataToSave = data
-      .save()
-      .then((result) => {
-        res.status(201).json(result);
-      })
-      .catch((error: Error) => {
-        next(error);
-      });
+    const newUser = await data.save();
+    res.status(201).json(newUser);
   } catch (error) {
     next(error);
   }
@@ -128,20 +122,25 @@ router.get(
 router.post(
   "/items/:username",
   async (req: Request, res: Response, next: NextFunction) => {
-    const username = req.params.username;
-    const newItem = {
-      item_name: req.body.item_name,
-      description: req.body.description,
-      img_string: req.body.img_string,
-      likes: [],
-    };
-    const options = { new: true };
-    const data = await model.findOneAndUpdate(
-      { username: username },
-      { $addToSet: { items: newItem } },
-      options
-    );
-    res.status(201).json(data);
+    try {
+      const username = req.params.username;
+      const newItem = {
+        item_name: req.body.item_name,
+        description: req.body.description,
+        img_string: req.body.img_string,
+        likes: [],
+      };
+      const options = { new: true };
+      const data = await model.findOneAndUpdate(
+        { username: username },
+        { $addToSet: { items: newItem } },
+        options);
+      if (data === null){
+        throw new Error("Status: 404: ");
+      } else res.status(201).json(data);
+    } catch (error) {
+      next(error)
+    }
   }
 );
 

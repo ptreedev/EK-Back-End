@@ -41,7 +41,7 @@ router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, 
     }
 }));
 //post a new user
-router.post("/new-user", (req, res, next) => {
+router.post("/new-user", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = new model_1.default({
             name: req.body.name,
@@ -50,19 +50,13 @@ router.post("/new-user", (req, res, next) => {
             address: req.body.address,
             matches: req.body.matches,
         });
-        const dataToSave = data
-            .save()
-            .then((result) => {
-            res.status(201).json(result);
-        })
-            .catch((error) => {
-            next(error);
-        });
+        const newUser = yield data.save();
+        res.status(201).json(newUser);
     }
     catch (error) {
         next(error);
     }
-});
+}));
 //GET by user by ID
 router.get("/users/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -119,16 +113,25 @@ router.get("/:username/items", (req, res, next) => __awaiter(void 0, void 0, voi
 }));
 //POST add a new items to your items
 router.post("/items/:username", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const username = req.params.username;
-    const newItem = {
-        item_name: req.body.item_name,
-        description: req.body.description,
-        img_string: req.body.img_string,
-        likes: [],
-    };
-    const options = { new: true };
-    const data = yield model_1.default.findOneAndUpdate({ username: username }, { $addToSet: { items: newItem } }, options);
-    res.status(201).json(data);
+    try {
+        const username = req.params.username;
+        const newItem = {
+            item_name: req.body.item_name,
+            description: req.body.description,
+            img_string: req.body.img_string,
+            likes: [],
+        };
+        const options = { new: true };
+        const data = yield model_1.default.findOneAndUpdate({ username: username }, { $addToSet: { items: newItem } }, options);
+        if (data === null) {
+            throw new Error("Status: 404: ");
+        }
+        else
+            res.status(201).json(data);
+    }
+    catch (error) {
+        next(error);
+    }
 }));
 //GET items by item_ID
 router.get("/items/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

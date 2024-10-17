@@ -25,7 +25,11 @@ database.once("connected", () => {
 app.use(express_1.default.json());
 app.use(`/api`, route_1.default);
 app.all("*", (req, res) => {
-    res.status(404).send({ msg: "URL not found" });
+    res.status(404).send({ message: "URL not found" });
+});
+app.use((error, req, res, next) => {
+    console.log(error);
+    res.status(404).send(error);
 });
 app.use((error, req, res, next) => {
     if (error.name === "BSONError") {
@@ -46,7 +50,7 @@ app.use((error, req, res, next) => {
 });
 app.use((error, req, res, next) => {
     if (error.name === "ValidationError") {
-        res.status(400).json({ message: "Missing Required Fields" });
+        res.status(400).json({ message: "Invalid request, missing Required Fields" });
     }
     else {
         next(error);
