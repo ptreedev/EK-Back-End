@@ -77,13 +77,13 @@ describe("POST: /api/new-user", () => {
                 expect(body.message).toBe("URL not found");
             });
     });
-    it("400: returns an error when user body is missing properties/values", async () => {
+    it("422: returns an error when user body is missing properties/values", async () => {
         await request(app)
             .post("/api/new-user")
             .send({
                 username: "test2"
             })
-            .expect(400)
+            .expect(422)
             .then(({ body }) => {
                 expect(body.message).toBe("Invalid request, missing Required Fields");
             });
@@ -114,13 +114,24 @@ describe("POST: /api/items/:username", () => {
                 );
             });
     });
-    it.only("404: returns an error when username incorrect", async () => {
+    it("404: returns an error when username incorrect", async () => {
         await request(app)
             .post("/api/items/alice_wunder")
             .send(item)
             .expect(404)
+            .then(({text}) => {
+                expect(text).toBe("Username not found")
+            });
+    });
+    it("422: returns an error when item body is missing properties/values", async () => {
+        await request(app)
+            .post("/api/items/alice_wonder")
+            .send({
+                item_name: "Table"
+            })
+            .expect(422)
             .then(({ body }) => {
-                expect(body.message).toBe("user not found")
+                expect(body.message).toBe("Invalid request, missing Required Fields");
             });
     });
 });

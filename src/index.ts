@@ -27,40 +27,34 @@ app.all("*", (req: Request, res: Response) => {
 });
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
-  console.log(error)
-  res.status(404).send(error)
+  if(error.message === "Username not found"){
+    res.status(404).send(error.message)
+  } else next(error)
 });
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   if (error.name === "BSONError") {
     res.status(400).json({ message: "Not a valid ID" });
-  } else {
-    next(error);
-  }
+  } else next(error);
+  
 });
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   if (error.name === "SyntaxError") {
     console.log(error)
     res.status(400).json({ message: "Please Enter the Data Correctly" });
-  } else {
-    next(error);
-  }
+  } else next(error);
 });
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   if (error.name === "ValidationError") {
-    res.status(400).json({message: "Invalid request, missing Required Fields"});
-  } else {
-    next(error);
-  }
+    res.status(422).json({message: "Invalid request, missing Required Fields"});
+  } else next(error);
 });
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   if (error.message === "invalid username") {
     res.status(400).json({ message: error.message });
-  } else {
-    next(error);
-  }
+  } else next(error);
 });
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
@@ -70,9 +64,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
     error.message === "Cannot read properties of undefined (reading 'items')"
   ) {
     res.status(404).json({ message: "Cannot Find Matching ID" });
-  } else {
-    next(error);
-  }
+  } else next(error);
 });
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {

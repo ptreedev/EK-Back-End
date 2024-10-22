@@ -130,13 +130,20 @@ router.post(
         img_string: req.body.img_string,
         likes: [],
       };
+      if(newItem.item_name === undefined || newItem.description === undefined || newItem.img_string === undefined){
+        const e = new Error("Validation Failed");
+        e.name = "ValidationError";
+        throw e;
+      };
       const options = { new: true };
       const data = await model.findOneAndUpdate(
         { username: username },
         { $addToSet: { items: newItem } },
         options);
       if (data === null){
-        throw new Error("Status: 404: ");
+        const e = new Error("Username not found");
+        e.name = "SyntaxError";
+        throw e;
       } else res.status(201).json(data);
     } catch (error) {
       next(error)

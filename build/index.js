@@ -28,41 +28,40 @@ app.all("*", (req, res) => {
     res.status(404).send({ message: "URL not found" });
 });
 app.use((error, req, res, next) => {
-    console.log(error);
-    res.status(404).send(error);
+    if (error.message === "Username not found") {
+        res.status(404).send(error.message);
+    }
+    else
+        next(error);
 });
 app.use((error, req, res, next) => {
     if (error.name === "BSONError") {
         res.status(400).json({ message: "Not a valid ID" });
     }
-    else {
+    else
         next(error);
-    }
 });
 app.use((error, req, res, next) => {
     if (error.name === "SyntaxError") {
         console.log(error);
         res.status(400).json({ message: "Please Enter the Data Correctly" });
     }
-    else {
+    else
         next(error);
-    }
 });
 app.use((error, req, res, next) => {
     if (error.name === "ValidationError") {
         res.status(400).json({ message: "Invalid request, missing Required Fields" });
     }
-    else {
+    else
         next(error);
-    }
 });
 app.use((error, req, res, next) => {
     if (error.message === "invalid username") {
         res.status(400).json({ message: error.message });
     }
-    else {
+    else
         next(error);
-    }
 });
 app.use((error, req, res, next) => {
     if (error.message ===
@@ -70,9 +69,8 @@ app.use((error, req, res, next) => {
         error.message === "Cannot read properties of undefined (reading 'items')") {
         res.status(404).json({ message: "Cannot Find Matching ID" });
     }
-    else {
+    else
         next(error);
-    }
 });
 app.use((error, req, res, next) => {
     res.status(500).json({ message: error.message });
