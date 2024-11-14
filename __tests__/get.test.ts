@@ -26,8 +26,8 @@ describe("Endpoint Testing", () => {
       await request(app)
         .get(`/ap`)
         .expect(404)
-        .then(({ body }) => {
-          expect(body.msg).toBe("URL not found");
+        .then(({body}) => {
+          expect(body.message).toBe("URL not found");
         });
     });
   });
@@ -142,7 +142,7 @@ describe("Endpoint Testing", () => {
         .get(`/api/peteisking/iems`)
         .expect(404)
         .then(({ body }) => {
-          expect(body.msg).toBe("URL not found");
+          expect(body.message).toBe("URL not found");
         });
     });
   });
@@ -165,4 +165,10 @@ describe("Endpoint Testing", () => {
         });
     });
   });
+  // describe("GET: /api/tradesuccess/:matching_id/", () => {
+  //   it("200: returns an array of 2 users addresses who have matched", async () => {
+  //     await request(app)
+  //       .get('/api/tradesuccess/')
+  //   })
+  // })
 });

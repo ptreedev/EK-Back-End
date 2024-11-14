@@ -4,11 +4,13 @@ import mongoose, { Schema } from "mongoose";
 import api from "../../api.json";
 const router = express.Router();
 
-// GET all users
+// GET API endpoints
 
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json(api);
 });
+
+// GET all users
 
 router.get(
   "/users",
@@ -21,7 +23,7 @@ router.get(
     }
   }
 );
-// POST many new users at once
+// POST new users
 router.post(
   "/manyusers",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -33,7 +35,7 @@ router.post(
     }
   }
 );
-//post a new user
+// POST a new user
 router.post("/new-user", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = new model({
@@ -63,7 +65,7 @@ router.get(
     }
   }
 );
-//get user by username
+//GET user by username
 router.get(
   "/user/:username",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -81,7 +83,7 @@ router.get(
     }
   }
 );
-//Brings back an array of liked items for a user
+//GET an array of users liked items 
 router.get(
   "/likes/:user_id",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -102,7 +104,7 @@ router.get(
     }
   }
 );
-//GET a users Items from the database
+//GET a users items 
 router.get(
   "/:username/items",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -118,7 +120,7 @@ router.get(
     }
   }
 );
-//POST add a new items to your items
+//POST add a new item 
 router.post(
   "/items/:username",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -130,7 +132,7 @@ router.post(
         img_string: req.body.img_string,
         likes: [],
       };
-      if(newItem.item_name === undefined || newItem.description === undefined || newItem.img_string === undefined){
+      if (newItem.item_name === undefined || newItem.description === undefined || newItem.img_string === undefined) {
         const e = new Error("Validation Failed");
         e.name = "ValidationError";
         throw e;
@@ -140,7 +142,7 @@ router.post(
         { username: username },
         { $addToSet: { items: newItem } },
         options);
-      if (data === null){
+      if (data === null) {
         const e = new Error("Username not found");
         e.name = "SyntaxError";
         throw e;
@@ -188,6 +190,7 @@ router.get(
     }
   }
 );
+// GET addresses of users upon successful match
 router.get(
   "/tradesuccess/:matching_id/",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -221,7 +224,7 @@ router.get(
   }
 );
 
-//POST set a trade accept boolean in each of the userts matches
+//PATCH set a trade accept boolean in each of the users matches
 router.patch(
   "/settrade",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -249,7 +252,7 @@ router.patch(
       const id = new mongoose.Types.ObjectId(req.params.id);
 
       const updatedData = req.body;
-      const data: string = updatedData.likes;
+      const data = mongoose.Types.ObjectId.createFromHexString(updatedData.likes);
       const options = { new: true };
 
       const result = await model.findOneAndUpdate(
@@ -260,11 +263,14 @@ router.patch(
 
       res.status(200).send(result);
     } catch (error) {
-      res.status(400).json({ message: (error as Error).message });
+      console.log((error as Error).message)
+      if((error as Error).message === "hex string must be 24 characters"){
+        res.status(422).json({message: "Invalid request"})
+      } else res.status(400).json({ message: (error as Error).message });
     }
   }
 );
-//gets available trades
+//GET available trades
 router.get(
   "/trades/:matching_id/:username",
 

@@ -93,7 +93,7 @@ const item = {
     "item_name": "chair",
     "description": "To sit on",
     "img_string": "https://www.internionline.it/cdn/shop/files/358832_DRIADE_01.jpg?v=1726069731&width=2000"
-  };
+};
 
 describe("POST: /api/items/:username", () => {
     it("201: adds an item to items subdocument of specified user", async () => {
@@ -110,7 +110,7 @@ describe("POST: /api/items/:username", () => {
                         "img_string": "https://www.internionline.it/cdn/shop/files/358832_DRIADE_01.jpg?v=1726069731&width=2000",
                         "likes": [],
                         "_id": expect.any(String)
-                      }
+                    }
                 );
             });
     });
@@ -119,7 +119,7 @@ describe("POST: /api/items/:username", () => {
             .post("/api/items/alice_wunder")
             .send(item)
             .expect(404)
-            .then(({text}) => {
+            .then(({ text }) => {
                 expect(text).toBe("Username not found")
             });
     });
@@ -132,6 +132,48 @@ describe("POST: /api/items/:username", () => {
             .expect(422)
             .then(({ body }) => {
                 expect(body.message).toBe("Invalid request, missing Required Fields");
+            });
+    });
+});
+describe("PATCH: /api/items/:id", () => {
+    it("200: Updates likes array of an item with a users id", async () => {
+        await request(app)
+            .patch("/api/items/60c72b2f9b1e8a4f10b7b202")
+            .send({
+                likes: "60c72b2f9b1e8a4f10b7b1f4"
+            })
+            .expect(200)
+            .then(({ body: { items } }) => {
+                expect(items[0]).toMatchObject({
+                    item_name: 'plant',
+                    description: 'To brighten up your space',
+                    img_string: 'https://www.bpmcdn.com/f/files/kimberley/import/2021-07/25765559_web1_210708-CVA-gardening-morris-flowers_4.jpg;w=1200;h=800;mode=crop',
+                    likes: ['60c72b2f9b1e8a4f10b7b1f4'],
+                    _id: '60c72b2f9b1e8a4f10b7b202'
+                });
+            });
+    });
+    it("400: Returns an error when item id is incorrect", async () => {
+        await request(app)
+            .patch("/api/items/banana")
+            .send({
+                likes: "60c72b2f9b1e8a4f10b7b1f4"
+            })
+            .expect(400)
+            .then(({ body }) => {
+                console.log(body)
+                expect(body.message).toBe("input must be a 24 character hex string, 12 byte Uint8Array, or an integer")
+            });
+    });
+    it("422: returns an error when item body is missing / does not contain correct properties/values", async () => {
+        await request(app)
+            .patch("/api/items/60c72b2f9b1e8a4f10b7b202")
+            .send({
+                likes: "banana"
+            })
+            .expect(422)
+            .then(({ body }) => {
+                expect(body.message).toBe("Invalid request");
             });
     });
 });

@@ -51,7 +51,7 @@ app.use((error, req, res, next) => {
 });
 app.use((error, req, res, next) => {
     if (error.name === "ValidationError") {
-        res.status(400).json({ message: "Invalid request, missing Required Fields" });
+        res.status(422).json({ message: "Invalid request, missing Required Fields" });
     }
     else
         next(error);
