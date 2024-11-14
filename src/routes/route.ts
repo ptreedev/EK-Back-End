@@ -263,9 +263,8 @@ router.patch(
 
       res.status(200).send(result);
     } catch (error) {
-      console.log((error as Error).message)
-      if((error as Error).message === "hex string must be 24 characters"){
-        res.status(422).json({message: "Invalid request"})
+      if ((error as Error).message === "hex string must be 24 characters") {
+        res.status(422).json({ message: "Invalid request" })
       } else res.status(400).json({ message: (error as Error).message });
     }
   }
@@ -330,7 +329,7 @@ router.get(
     }
   }
 );
-//checks whether a match has occured
+//checks whether a match has occured and if true, creates a match subdocument
 router.post(
   "/matchcheck",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -394,6 +393,9 @@ router.post(
         res.status(304).send({ msg: "not modified" });
       }
     } catch (error) {
+      if ((error as Error).name === "BSONError") {
+        res.status(422).send({ message: "Invalid request" })
+      }
       next(error);
     }
   }

@@ -161,7 +161,6 @@ describe("PATCH: /api/items/:id", () => {
             })
             .expect(400)
             .then(({ body }) => {
-                console.log(body)
                 expect(body.message).toBe("input must be a 24 character hex string, 12 byte Uint8Array, or an integer")
             });
     });
@@ -170,6 +169,49 @@ describe("PATCH: /api/items/:id", () => {
             .patch("/api/items/60c72b2f9b1e8a4f10b7b202")
             .send({
                 likes: "banana"
+            })
+            .expect(422)
+            .then(({ body }) => {
+                expect(body.message).toBe("Invalid request");
+            });
+    });
+
+});
+describe("POST: /api/matchcheck", () => {
+    it("201: creates a matches sub document for each user if a match has occurred and then returns an array of the 2 users", async () => {
+        await request(app)
+            .post("/api/matchcheck")
+            .send({
+                user_id: "60c72b2f9b1e8a4f10b7b1f1",
+                item_id: "60c72b2f9b1e8a4f10b7b1f9"
+            })
+            .expect(201)
+            .then(({ body }) => {
+                expect(body[0].matches).toMatchObject([{
+                    match_item_name: 'table',
+                    match_user_name: 'alice_wonder',
+                    match_img_string: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd02xUg_2qkUSHvHQD5N-aqIjm1B-pYi4u2g&s',
+                    match_user_id: '60c72b2f9b1e8a4f10b7b1f2',
+                    match_item_id: '60c72b2f9b1e8a4f10b7b1f9',
+                    matching_id: expect.any(String),
+                    _id: expect.any(String)
+                }]);
+                expect(body[1].matches).toMatchObject([{
+                    match_item_name: 'chair',
+                    match_user_name: 'peteisking',
+                    match_img_string: 'https://www.internionline.it/cdn/shop/files/358832_DRIADE_01.jpg?v=1726069731&width=2000',
+                    match_user_id: '60c72b2f9b1e8a4f10b7b1f1',
+                    match_item_id: '60c72b2f9b1e8a4f10b7b1f6',
+                    matching_id: expect.any(String),
+                    _id: expect.any(String)
+                }]);
+            });
+    });
+    it("422: returns an error when item body is missing / does not contain correct properties/values", async () => {
+        await request(app)
+            .post("/api/matchcheck")
+            .send({
+                item_id: "2332"
             })
             .expect(422)
             .then(({ body }) => {
