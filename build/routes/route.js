@@ -17,10 +17,11 @@ const model_1 = __importDefault(require("../models/model"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const api_json_1 = __importDefault(require("../../api.json"));
 const router = express_1.default.Router();
-// GET all users
+// GET API endpoints
 router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json(api_json_1.default);
 }));
+// GET all users
 router.get("/users", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = yield model_1.default.find();
@@ -30,7 +31,7 @@ router.get("/users", (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         next(error);
     }
 }));
-// POST many new users at once
+// POST new users
 router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const insert = yield model_1.default.insertMany(req.body);
@@ -40,7 +41,7 @@ router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, 
         next(error);
     }
 }));
-//post a new user
+// POST a new user
 router.post("/new-user", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = new model_1.default({
@@ -68,7 +69,7 @@ router.get("/users/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, f
         next(error);
     }
 }));
-//get user by username
+//GET user by username
 router.get("/user/:username", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = yield model_1.default
@@ -84,7 +85,7 @@ router.get("/user/:username", (req, res, next) => __awaiter(void 0, void 0, void
         next(error);
     }
 }));
-//Brings back an array of liked items for a user
+//GET an array of users liked items 
 router.get("/likes/:user_id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.user_id;
     try {
@@ -100,7 +101,7 @@ router.get("/likes/:user_id", (req, res, next) => __awaiter(void 0, void 0, void
         next(error);
     }
 }));
-//GET a users Items from the database
+//GET a users items 
 router.get("/:username/items", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const username = req.params.username;
     try {
@@ -111,7 +112,7 @@ router.get("/:username/items", (req, res, next) => __awaiter(void 0, void 0, voi
         next(error);
     }
 }));
-//POST add a new items to your items
+//POST add a new item 
 router.post("/items/:username", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const username = req.params.username;
@@ -121,10 +122,18 @@ router.post("/items/:username", (req, res, next) => __awaiter(void 0, void 0, vo
             img_string: req.body.img_string,
             likes: [],
         };
+        if (newItem.item_name === undefined || newItem.description === undefined || newItem.img_string === undefined) {
+            const e = new Error("Validation Failed");
+            e.name = "ValidationError";
+            throw e;
+        }
+        ;
         const options = { new: true };
         const data = yield model_1.default.findOneAndUpdate({ username: username }, { $addToSet: { items: newItem } }, options);
         if (data === null) {
-            throw new Error("Status: 404: ");
+            const e = new Error("Username not found");
+            e.name = "SyntaxError";
+            throw e;
         }
         else
             res.status(201).json(data);
@@ -166,6 +175,7 @@ router.get("/items", (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         res.status(500).json({ message: error.message });
     }
 }));
+// GET addresses of users upon successful match
 router.get("/tradesuccess/:matching_id/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const matching_id = req.params.matching_id;
     try {
@@ -188,7 +198,7 @@ router.get("/tradesuccess/:matching_id/", (req, res, next) => __awaiter(void 0, 
         next(error);
     }
 }));
-//POST set a trade accept boolean in each of the userts matches
+//PATCH set a trade accept boolean in each of the users matches
 router.patch("/settrade", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const match_id = new mongoose_1.default.Types.ObjectId(`${req.body.match_id}`);
@@ -206,16 +216,20 @@ router.patch("/items/:id", (req, res, next) => __awaiter(void 0, void 0, void 0,
     try {
         const id = new mongoose_1.default.Types.ObjectId(req.params.id);
         const updatedData = req.body;
-        const data = updatedData.likes;
+        const data = mongoose_1.default.Types.ObjectId.createFromHexString(updatedData.likes);
         const options = { new: true };
         const result = yield model_1.default.findOneAndUpdate({ "items._id": id }, { $addToSet: { "items.$.likes": data } }, options);
         res.status(200).send(result);
     }
     catch (error) {
-        res.status(400).json({ message: error.message });
+        if (error.message === "hex string must be 24 characters") {
+            res.status(422).json({ message: "Invalid request" });
+        }
+        else
+            res.status(400).json({ message: error.message });
     }
 }));
-//gets available trades
+//GET available trades
 router.get("/trades/:matching_id/:username", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     if (req.params.matching_id) {
         const matching_id = req.params.matching_id;
@@ -268,7 +282,7 @@ router.get("/matches/:user_id", (req, res, next) => __awaiter(void 0, void 0, vo
         res.json([]);
     }
 }));
-//checks whether a match has occured
+//checks whether a match has occured and if true, creates a match subdocument
 router.post("/matchcheck", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     try {
@@ -321,6 +335,9 @@ router.post("/matchcheck", (req, res, next) => __awaiter(void 0, void 0, void 0,
         }
     }
     catch (error) {
+        if (error.name === "BSONError") {
+            res.status(422).send({ message: "Invalid request" });
+        }
         next(error);
     }
 }));
