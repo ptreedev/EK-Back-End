@@ -99,7 +99,7 @@
         "item_name": "bed",
         "description": "Where you sleep",
         "img_string": "https://www.naturalbedcompany.co.uk/wp-content/uploads/WALNUT-LEITH-MODERN-BED-WITH-CHARCOAL-LINEN-BEDDING.jpg",
-        "likes": []
+        "likes": ["60c72b2f9b1e8a4f10b7b1f5"]
       },
       {
         "_id": "60c72b2f9b1e8a4f10b7b200",
@@ -117,7 +117,15 @@
         "post_code": "B1 1AA"
       }
     ],
-    "matches": []
+    "matches": [{
+      "match_item_name": "plant",
+      "match_user_name": "daisy_flower",
+      "match_img_string": "https://www.bpmcdn.com/f/files/kimberley/import/2021-07/25765559_web1_210708-CVA-gardening-morris-flowers_4.jpg;w=1200;h=800;mode=crop",
+      "match_user_id": "60c72b2f9b1e8a4f10b7b1f5",
+      "match_item_id": "60c72b2f9b1e8a4f10b7b202",
+      "matching_id": "1731662301477",
+      "_id": "673711dd9c99a216961694e4"
+    }]
   },
   {
     "_id": "60c72b2f9b1e8a4f10b7b1f5",
@@ -129,7 +137,7 @@
         "item_name": "plant",
         "description": "To brighten up your space",
         "img_string": "https://www.bpmcdn.com/f/files/kimberley/import/2021-07/25765559_web1_210708-CVA-gardening-morris-flowers_4.jpg;w=1200;h=800;mode=crop",
-        "likes": []
+        "likes": ["60c72b2f9b1e8a4f10b7b1f4"]
       },
       {
         "_id": "60c72b2f9b1e8a4f10b7b203",
@@ -147,6 +155,14 @@
         "post_code": "G1 1AA"
       }
     ],
-    "matches": []
+    "matches": [{
+      "match_item_name": "bed",
+      "match_user_name": "charlie_the_cat",
+      "match_img_string": "https://www.naturalbedcompany.co.uk/wp-content/uploads/WALNUT-LEITH-MODERN-BED-WITH-CHARCOAL-LINEN-BEDDING.jpg",
+      "match_user_id": "60c72b2f9b1e8a4f10b7b1f4",
+      "match_item_id": "60c72b2f9b1e8a4f10b7b1ff",
+      "matching_id": "1731662301477",
+      "_id": "673711dd9c99a216961694ea"
+    }]
   }
 ]

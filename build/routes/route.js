@@ -229,25 +229,35 @@ router.patch("/items/:id", (req, res, next) => __awaiter(void 0, void 0, void 0,
             res.status(400).json({ message: error.message });
     }
 }));
-//GET available trades
+//GET available trades for a user
 router.get("/trades/:matching_id/:username", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    if (req.params.matching_id) {
-        const matching_id = req.params.matching_id;
-        const username = req.params.username;
-        const getMatches = yield model_1.default.aggregate([
-            { $unwind: "$matches" },
-            { $replaceRoot: { newRoot: "$matches" } },
-            { $match: { matching_id: matching_id } },
-        ]);
-        if (getMatches) {
-            if (getMatches[0].match_user_name === username) {
-                const list = [getMatches[1], getMatches[0]];
-                res.status(200).json(list);
+    try {
+        if (req.params.matching_id) {
+            const matching_id = req.params.matching_id;
+            const username = req.params.username;
+            const getMatches = yield model_1.default.aggregate([
+                { $unwind: "$matches" },
+                { $replaceRoot: { newRoot: "$matches" } },
+                { $match: { matching_id: matching_id } },
+            ]);
+            console.log(username, getMatches[0].match_user_name);
+            if (getMatches[0].match_user_name !== username) {
+                const e = new Error("invalid username");
+                throw e;
             }
-            else {
-                res.status(200).json(getMatches);
+            else if (getMatches) {
+                if (getMatches[0].match_user_name === username) {
+                    const list = [getMatches[1], getMatches[0]];
+                    res.status(200).json(list);
+                }
+                else {
+                    res.status(200).json(getMatches);
+                }
             }
         }
+    }
+    catch (error) {
+        next(error);
     }
 }));
 //DELETE user by ID

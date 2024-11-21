@@ -59,9 +59,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   if (
-    error.message ===
-      "Cannot read properties of undefined (reading 'settrade')" ||
-    error.message === "Cannot read properties of undefined (reading 'items')"
+    error.message.includes("Cannot read properties of undefined")
   ) {
     res.status(404).json({ message: "Cannot Find Matching ID" });
   } else next(error);
