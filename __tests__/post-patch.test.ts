@@ -85,7 +85,7 @@ describe("POST: /api/new-user", () => {
             })
             .expect(422)
             .then(({ body }) => {
-                expect(body.message).toBe("Invalid request, missing Required Fields");
+                expect(body.message).toBe("Invalid request, check submitted fields");
             });
     });
 });
@@ -131,7 +131,7 @@ describe("POST: /api/items/:username", () => {
             })
             .expect(422)
             .then(({ body }) => {
-                expect(body.message).toBe("Invalid request, missing Required Fields");
+                expect(body.message).toBe("Invalid request, check submitted fields");
             });
     });
 });
@@ -224,6 +224,90 @@ describe("POST: /api/matchcheck", () => {
             .expect(404)
             .then(({ body }) => {
                 expect(body.message).toBe("URL not found");
+            });
+    });
+});
+describe("PATCH /api/settrade", () => {
+    it("200: sets trade accept boolean to true in a users matches subdocument and returns the updated user document", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "match_id": "673711dd9c99a216961694ea",
+                "bool": true
+            })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.matches[0].settrade).toBe(true)
+            });
+    });
+    it("200: sets trade accept boolean to false in a users matches subdocument and returns the updated user document", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "match_id": "673711dd9c99a216961694ea",
+                "bool": false
+            })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.matches[0].settrade).toBe(false)
+            });
+    });
+    it("404: returns an error when URL is incorrect", async () => {
+        await request(app)
+            .patch('/api/settrad')
+            .send({
+                "match_id": "673711dd9c99a216961694ea",
+                "bool": true
+            })
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe("URL not found")
+            });
+    });
+    it("422: returns an error when an invalid match_id is used", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "match_id": "60c72b2f9b1e8a4f10b7b1ff",
+                "bool": true
+            })
+            .expect(422)
+            .then(({ body }) => {
+                expect(body.message).toBe("Invalid request, check submitted fields");
+            });
+    });
+    it("422: returns an error when bool value is not a boolean", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "match_id": "673711dd9c99a216961694ea",
+                "bool": "banana"
+            })
+            .expect(422)
+            .then(({ body }) => {
+                expect(body.message).toBe("Invalid request, check submitted fields");
+            });
+    });
+    it("422: returns an error when missing match_id property in sent body", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "bool": "banana"
+            })
+            .expect(422)
+            .then(({ body }) => {
+                expect(body.message).toBe("Invalid request, check submitted fields");
+            });
+    });
+    it("422: returns an error when bool property is missing", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "match_id": "673711dd9c99a216961694ea",
+            })
+            .expect(422)
+            .then(({ body }) => {
+                expect(body.message).toBe("Invalid request, check submitted fields");
             });
     });
 });

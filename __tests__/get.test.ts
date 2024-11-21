@@ -165,7 +165,7 @@ describe("Endpoint Testing", () => {
     });
   });
   describe("GET: /api/trades/:matching_id/:username", () => {
-    it("200: returns an array of available matches for a user including users own matches information", async () => {
+    it("200: returns an array of available trades for a user including users own matches information", async () => {
       await request(app)
         .get("/api/trades/1731662301477/daisy_flower")
         .expect(200)

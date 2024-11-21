@@ -225,11 +225,14 @@ router.get(
   }
 );
 
-//PATCH set a trade accept boolean in each of the users matches
+//PATCH set a trade accept boolean in a users matches subdocument
 router.patch(
   "/settrade",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      if((req.body.match_id === undefined || null) || (req.body.bool === undefined || null)){
+        res.status(422).send({message: "Invalid request, check submitted fields"})
+      }
       const match_id = new mongoose.Types.ObjectId(`${req.body.match_id}`);
       const val: boolean = req.body.bool;
       const options = { new: true };
@@ -238,6 +241,9 @@ router.patch(
         { $set: { "matches.$.settrade": val } },
         options
       );
+      if(changeBool === null){const e = new Error();
+        e.name = "ValidationError";
+        throw e;}
       res.status(200).json(changeBool);
     } catch (error) {
       next(error);
