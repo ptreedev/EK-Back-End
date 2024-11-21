@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../models/model";
 import mongoose, { Schema } from "mongoose";
 import api from "../../api.json";
+import { error } from "console";
 const router = express.Router();
 
 // GET API endpoints
@@ -224,11 +225,14 @@ router.get(
   }
 );
 
-//PATCH set a trade accept boolean in each of the users matches
+//PATCH set a trade accept boolean in a users matches subdocument
 router.patch(
   "/settrade",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      if((req.body.match_id === undefined || null) || (req.body.bool === undefined || null)){
+        res.status(422).send({message: "Invalid request, check submitted fields"})
+      }
       const match_id = new mongoose.Types.ObjectId(`${req.body.match_id}`);
       const val: boolean = req.body.bool;
       const options = { new: true };
@@ -237,6 +241,9 @@ router.patch(
         { $set: { "matches.$.settrade": val } },
         options
       );
+      if(changeBool === null){const e = new Error();
+        e.name = "ValidationError";
+        throw e;}
       res.status(200).json(changeBool);
     } catch (error) {
       next(error);
@@ -269,28 +276,37 @@ router.patch(
     }
   }
 );
-//GET available trades
+//GET available trades for a user
 router.get(
   "/trades/:matching_id/:username",
 
   async (req: Request, res: Response, next: NextFunction) => {
-    if (req.params.matching_id) {
-      const matching_id: string = req.params.matching_id;
-      const username: string = req.params.username;
-      const getMatches = await model.aggregate([
-        { $unwind: "$matches" },
-        { $replaceRoot: { newRoot: "$matches" } },
-        { $match: { matching_id: matching_id } },
-      ]);
-
-      if (getMatches) {
-        if (getMatches[0].match_user_name === username) {
-          const list = [getMatches[1], getMatches[0]];
-          res.status(200).json(list);
-        } else {
-          res.status(200).json(getMatches);
-        }
+    try {
+      if (req.params.matching_id) {
+        const matching_id: string = req.params.matching_id;
+        const username: string = req.params.username;
+        const getMatches = await model.aggregate([
+          { $unwind: "$matches" },
+          { $replaceRoot: { newRoot: "$matches" } },
+          { $match: { matching_id: matching_id } },
+        ]);
+        console.log(username, getMatches[0].match_user_name)
+        if (getMatches[0].match_user_name !== username) {
+          const e = new Error("invalid username");
+          throw e;
+        } else
+          if (getMatches) {
+            if (getMatches[0].match_user_name === username) {
+              const list = [getMatches[1], getMatches[0]];
+              res.status(200).json(list);
+            } else {
+              res.status(200).json(getMatches);
+            }
+          }
       }
+    }
+    catch (error) {
+      next(error)
     }
   }
 );

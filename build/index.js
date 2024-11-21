@@ -43,15 +43,14 @@ app.use((error, req, res, next) => {
 });
 app.use((error, req, res, next) => {
     if (error.name === "SyntaxError") {
-        console.log(error);
         res.status(400).json({ message: "Please Enter the Data Correctly" });
     }
     else
         next(error);
 });
 app.use((error, req, res, next) => {
-    if (error.name === "ValidationError") {
-        res.status(422).json({ message: "Invalid request, missing Required Fields" });
+    if (error.name === "ValidationError" || "CastError") {
+        res.status(422).json({ message: "Invalid request, check submitted fields" });
     }
     else
         next(error);
@@ -64,9 +63,7 @@ app.use((error, req, res, next) => {
         next(error);
 });
 app.use((error, req, res, next) => {
-    if (error.message ===
-        "Cannot read properties of undefined (reading 'settrade')" ||
-        error.message === "Cannot read properties of undefined (reading 'items')") {
+    if (error.message.includes("Cannot read properties of undefined")) {
         res.status(404).json({ message: "Cannot Find Matching ID" });
     }
     else

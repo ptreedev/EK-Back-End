@@ -85,7 +85,7 @@ describe("POST: /api/new-user", () => {
             })
             .expect(422)
             .then(({ body }) => {
-                expect(body.message).toBe("Invalid request, missing Required Fields");
+                expect(body.message).toBe("Invalid request, check submitted fields");
             });
     });
 });
@@ -131,25 +131,25 @@ describe("POST: /api/items/:username", () => {
             })
             .expect(422)
             .then(({ body }) => {
-                expect(body.message).toBe("Invalid request, missing Required Fields");
+                expect(body.message).toBe("Invalid request, check submitted fields");
             });
     });
 });
 describe("PATCH: /api/items/:id", () => {
     it("200: Updates likes array of an item with a users id", async () => {
         await request(app)
-            .patch("/api/items/60c72b2f9b1e8a4f10b7b202")
+            .patch("/api/items/60c72b2f9b1e8a4f10b7b1fc")
             .send({
                 likes: "60c72b2f9b1e8a4f10b7b1f4"
             })
             .expect(200)
             .then(({ body: { items } }) => {
                 expect(items[0]).toMatchObject({
-                    item_name: 'plant',
-                    description: 'To brighten up your space',
-                    img_string: 'https://www.bpmcdn.com/f/files/kimberley/import/2021-07/25765559_web1_210708-CVA-gardening-morris-flowers_4.jpg;w=1200;h=800;mode=crop',
+                    item_name: 'bookshelf',
+                    description: 'To store your books',
+                    img_string: 'https://images.photowall.com/products/84850/vintage-bookshelf.jpg?h=699&q=85',
                     likes: ['60c72b2f9b1e8a4f10b7b1f4'],
-                    _id: '60c72b2f9b1e8a4f10b7b202'
+                    _id: '60c72b2f9b1e8a4f10b7b1fc'
                 });
             });
     });
@@ -216,6 +216,98 @@ describe("POST: /api/matchcheck", () => {
             .expect(422)
             .then(({ body }) => {
                 expect(body.message).toBe("Invalid request");
+            });
+    });
+    it("404: returns an error when URL is incorrect", async () => {
+        await request(app)
+            .get(`/api/match`)
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe("URL not found");
+            });
+    });
+});
+describe("PATCH /api/settrade", () => {
+    it("200: sets trade accept boolean to true in a users matches subdocument and returns the updated user document", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "match_id": "673711dd9c99a216961694ea",
+                "bool": true
+            })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.matches[0].settrade).toBe(true)
+            });
+    });
+    it("200: sets trade accept boolean to false in a users matches subdocument and returns the updated user document", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "match_id": "673711dd9c99a216961694ea",
+                "bool": false
+            })
+            .expect(200)
+            .then(({ body }) => {
+                expect(body.matches[0].settrade).toBe(false)
+            });
+    });
+    it("404: returns an error when URL is incorrect", async () => {
+        await request(app)
+            .patch('/api/settrad')
+            .send({
+                "match_id": "673711dd9c99a216961694ea",
+                "bool": true
+            })
+            .expect(404)
+            .then(({ body }) => {
+                expect(body.message).toBe("URL not found")
+            });
+    });
+    it("422: returns an error when an invalid match_id is used", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "match_id": "60c72b2f9b1e8a4f10b7b1ff",
+                "bool": true
+            })
+            .expect(422)
+            .then(({ body }) => {
+                expect(body.message).toBe("Invalid request, check submitted fields");
+            });
+    });
+    it("422: returns an error when bool value is not a boolean", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "match_id": "673711dd9c99a216961694ea",
+                "bool": "banana"
+            })
+            .expect(422)
+            .then(({ body }) => {
+                expect(body.message).toBe("Invalid request, check submitted fields");
+            });
+    });
+    it("422: returns an error when missing match_id property in sent body", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "bool": "banana"
+            })
+            .expect(422)
+            .then(({ body }) => {
+                expect(body.message).toBe("Invalid request, check submitted fields");
+            });
+    });
+    it("422: returns an error when bool property is missing", async () => {
+        await request(app)
+            .patch('/api/settrade')
+            .send({
+                "match_id": "673711dd9c99a216961694ea",
+            })
+            .expect(422)
+            .then(({ body }) => {
+                expect(body.message).toBe("Invalid request, check submitted fields");
             });
     });
 });
