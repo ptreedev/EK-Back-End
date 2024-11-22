@@ -213,7 +213,6 @@ describe("GET Endpoint Testing", () => {
         .get('/api/tradesuccess/1731662301477')
         .expect(200)
         .then(({ body }) => {
-          console.log(body[1])
           expect(body[0].address).toMatchObject([{
             street: '25 Cherry Boulevard',
             city: 'Glasgow',
