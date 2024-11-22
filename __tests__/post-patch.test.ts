@@ -292,7 +292,7 @@ describe("PATCH /api/settrade", () => {
         await request(app)
             .patch('/api/settrade')
             .send({
-                "bool": "banana"
+                "bool": true
             })
             .expect(422)
             .then(({ body }) => {

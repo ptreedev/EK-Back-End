@@ -205,10 +205,9 @@ router.get(
 
       const firstMatch = getMatches[0];
       const secondMatch = getMatches[1];
-
       if (firstMatch.settrade && secondMatch.settrade) {
-        const id_one = new mongoose.Types.ObjectId(getMatches[0].match_user_id);
-        const id_two = new mongoose.Types.ObjectId(getMatches[1].match_user_id);
+        const id_one = getMatches[0].match_user_id;
+        const id_two = getMatches[1].match_user_id;
         const getAddress_one = await model.findOne(
           { _id: id_one },
           { address: 1, username: 1 }
@@ -230,7 +229,7 @@ router.patch(
   "/settrade",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if((req.body.match_id === undefined || null) || (req.body.bool === undefined || null)){
+      if((req.body.match_id === undefined || null) || (typeof req.body.bool !== "boolean")){
         res.status(422).send({message: "Invalid request, check submitted fields"})
       }
       const match_id = new mongoose.Types.ObjectId(`${req.body.match_id}`);
@@ -290,7 +289,6 @@ router.get(
           { $replaceRoot: { newRoot: "$matches" } },
           { $match: { matching_id: matching_id } },
         ]);
-        console.log(username, getMatches[0].match_user_name)
         if (getMatches[0].match_user_name !== username) {
           const e = new Error("invalid username");
           throw e;

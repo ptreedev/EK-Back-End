@@ -187,8 +187,8 @@ router.get("/tradesuccess/:matching_id/", (req, res, next) => __awaiter(void 0, 
         const firstMatch = getMatches[0];
         const secondMatch = getMatches[1];
         if (firstMatch.settrade && secondMatch.settrade) {
-            const id_one = new mongoose_1.default.Types.ObjectId(getMatches[0].match_user_id);
-            const id_two = new mongoose_1.default.Types.ObjectId(getMatches[1].match_user_id);
+            const id_one = getMatches[0].match_user_id;
+            const id_two = getMatches[1].match_user_id;
             const getAddress_one = yield model_1.default.findOne({ _id: id_one }, { address: 1, username: 1 });
             const getAddress_two = yield model_1.default.findOne({ _id: id_two }, { address: 1, username: 1 });
             res.status(200).json([getAddress_one, getAddress_two]);
@@ -201,7 +201,7 @@ router.get("/tradesuccess/:matching_id/", (req, res, next) => __awaiter(void 0, 
 //PATCH set a trade accept boolean in a users matches subdocument
 router.patch("/settrade", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if ((req.body.match_id === undefined || null) || (req.body.bool === undefined || null)) {
+        if ((req.body.match_id === undefined || null) || (typeof req.body.bool !== "boolean")) {
             res.status(422).send({ message: "Invalid request, check submitted fields" });
         }
         const match_id = new mongoose_1.default.Types.ObjectId(`${req.body.match_id}`);
@@ -248,7 +248,6 @@ router.get("/trades/:matching_id/:username", (req, res, next) => __awaiter(void 
                 { $replaceRoot: { newRoot: "$matches" } },
                 { $match: { matching_id: matching_id } },
             ]);
-            console.log(username, getMatches[0].match_user_name);
             if (getMatches[0].match_user_name !== username) {
                 const e = new Error("invalid username");
                 throw e;
