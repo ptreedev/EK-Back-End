@@ -45,7 +45,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
   } else next(error);
 });
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
-  if (error.name === "ValidationError" || "CastError") {
+  if (error.name === "ValidationError" ) {
     res.status(422).json({message: "Invalid request, check submitted fields"});
   } else next(error);
 });

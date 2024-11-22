@@ -124,6 +124,7 @@
       "match_user_id": "60c72b2f9b1e8a4f10b7b1f5",
       "match_item_id": "60c72b2f9b1e8a4f10b7b202",
       "matching_id": "1731662301477",
+      "settrade": "true",
       "_id": "673711dd9c99a216961694e4"
     }]
   },
@@ -162,6 +163,7 @@
       "match_user_id": "60c72b2f9b1e8a4f10b7b1f4",
       "match_item_id": "60c72b2f9b1e8a4f10b7b1ff",
       "matching_id": "1731662301477",
+      "settrade": "true",
       "_id": "673711dd9c99a216961694ea"
     }]
   }

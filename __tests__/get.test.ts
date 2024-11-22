@@ -12,7 +12,7 @@ afterAll(async () => {
   server.close();
 });
 
-describe("Endpoint Testing", () => {
+describe("GET Endpoint Testing", () => {
   describe("GET: /api", () => {
     it("200: returns api endpoints", () => {
       return request(app)
@@ -192,25 +192,48 @@ describe("Endpoint Testing", () => {
     });
     it("404: returns an error if matching_id is incorrect", async () => {
       await request(app)
-      .get("/api/trades/banana/daisy_flower")
-      .expect(404)
-      .then(({body}) => {
-        expect(body.message).toBe("Cannot Find Matching ID")
-      });
+        .get("/api/trades/banana/daisy_flower")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Cannot Find Matching ID")
+        });
     });
     it("400: returns an error if username is incorrect", async () => {
       await request(app)
-      .get("/api/trades/1731662301477/peteisking")
-      .expect(400)
-      .then(({body}) => {
-        expect(body.message).toBe("invalid username")
-      });
+        .get("/api/trades/1731662301477/peteisking")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe("invalid username")
+        });
     });
   });
-  // describe("GET: /api/tradesuccess/:matching_id/", () => {
-  //   it("200: returns an array of 2 users addresses who have matched", async () => {
-  //     await request(app)
-  //       .get('/api/tradesuccess/')
-  //   })
-  // })
+  describe("GET: /api/tradesuccess/:matching_id/", () => {
+    it("200: returns an array of 2 users addresses who have matched", async () => {
+      await request(app)
+        .get('/api/tradesuccess/1731662301477')
+        .expect(200)
+        .then(({ body }) => {
+          expect(body[0].address).toMatchObject([{
+            street: '25 Cherry Boulevard',
+            city: 'Glasgow',
+            post_code: 'G1 1AA',
+            _id: '60c72b2f9b1e8a4f10b7b204'
+          }]);
+          expect(body[1].address).toMatchObject([{
+            street: '30 Pine Lane',
+            city: 'Birmingham',
+            post_code: 'B1 1AA',
+            _id: '60c72b2f9b1e8a4f10b7b201'
+          }])
+        });
+    });
+    it("404: returns an error when Matching_id is invalid", async () => {
+      await request(app)
+        .get("/api/tradesuccess/banana")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Cannot Find Matching ID")
+        })
+    })
+  });
 });
