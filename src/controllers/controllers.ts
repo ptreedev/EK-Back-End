@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { selectUsers, findUserById } from "../models/models"
+import { selectUsers, findUserById, findUserByUsername } from "../models/models"
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -20,3 +20,12 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
     }
 }
 
+export const getUserByUsername = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { username } = req.params
+        const user = await findUserByUsername(username)
+        res.status(200).json(user);
+    } catch (error) {
+        next(error);
+    }
+} 

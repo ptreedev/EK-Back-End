@@ -26,6 +26,8 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
 router.get("/users", controllers_1.getUsers);
 //GET by user by ID
 router.get("/users/:id", controllers_1.getUserById);
+//GET user by username
+router.get("/user/:username", controllers_1.getUserByUsername);
 // POST new users
 router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -48,22 +50,6 @@ router.post("/new-user", (req, res, next) => __awaiter(void 0, void 0, void 0, f
         });
         const newUser = yield data.save();
         res.status(201).json(newUser);
-    }
-    catch (error) {
-        next(error);
-    }
-}));
-//GET user by username
-router.get("/user/:username", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const data = yield model_1.default
-            .findOne({ username: req.params.username })
-            .then((data) => {
-            if (data === null) {
-                return Promise.reject({ status: 400, message: "invalid username" });
-            }
-            res.status(200).json(data);
-        });
     }
     catch (error) {
         next(error);

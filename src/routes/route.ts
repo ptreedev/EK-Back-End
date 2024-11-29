@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { getUserById, getUsers } from "../controllers/controllers"
+import { getUserById, getUserByUsername, getUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -20,6 +20,11 @@ router.get(
 //GET by user by ID
 router.get(
   "/users/:id", getUserById
+);
+
+//GET user by username
+router.get(
+  "/user/:username", getUserByUsername
 );
 
 // POST new users
@@ -51,24 +56,8 @@ router.post("/new-user", async (req: Request, res: Response, next: NextFunction)
 });
 
 
-//GET user by username
-router.get(
-  "/user/:username",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const data = await model
-        .findOne({ username: req.params.username })
-        .then((data) => {
-          if (data === null) {
-            return Promise.reject({ status: 400, message: "invalid username" });
-          }
-          res.status(200).json(data);
-        });
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+
+
 //GET an array of users liked items 
 router.get(
   "/likes/:user_id",
