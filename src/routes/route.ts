@@ -1,8 +1,8 @@
 import express, { Request, Response, NextFunction } from "express";
-import model from "../models/model";
-import mongoose, { Schema } from "mongoose";
+import model from "../schemas/model";
+import mongoose from "mongoose";
 import api from "../../api.json";
-import { error } from "console";
+import { getUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -14,15 +14,7 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 // GET all users
 
 router.get(
-  "/users",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const data = await model.find();
-      res.status(200).json(data);
-    } catch (error) {
-      next(error);
-    }
-  }
+  "/users", getUsers
 );
 // POST new users
 router.post(
@@ -229,8 +221,8 @@ router.patch(
   "/settrade",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if((req.body.match_id === undefined || null) || (typeof req.body.bool !== "boolean")){
-        res.status(422).send({message: "Invalid request, check submitted fields"})
+      if ((req.body.match_id === undefined || null) || (typeof req.body.bool !== "boolean")) {
+        res.status(422).send({ message: "Invalid request, check submitted fields" })
       }
       const match_id = new mongoose.Types.ObjectId(`${req.body.match_id}`);
       const val: boolean = req.body.bool;
@@ -240,9 +232,11 @@ router.patch(
         { $set: { "matches.$.settrade": val } },
         options
       );
-      if(changeBool === null){const e = new Error();
+      if (changeBool === null) {
+        const e = new Error();
         e.name = "ValidationError";
-        throw e;}
+        throw e;
+      }
       res.status(200).json(changeBool);
     } catch (error) {
       next(error);
