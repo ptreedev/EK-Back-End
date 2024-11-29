@@ -13,24 +13,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const model_1 = __importDefault(require("../models/model"));
+const model_1 = __importDefault(require("../schemas/model"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const api_json_1 = __importDefault(require("../../api.json"));
+const controllers_1 = require("../controllers/controllers");
 const router = express_1.default.Router();
 // GET API endpoints
 router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json(api_json_1.default);
 }));
 // GET all users
-router.get("/users", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const data = yield model_1.default.find();
-        res.status(200).json(data);
-    }
-    catch (error) {
-        next(error);
-    }
-}));
+router.get("/users", controllers_1.getUsers);
 // POST new users
 router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
