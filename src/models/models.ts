@@ -33,3 +33,11 @@ export const findLikesById = async (user_id: String) => {
         });
         return likes
 };
+
+export const findItemsByUsername = async (username: String) => {
+    const items = await model.findOne(
+        { username: username },
+        { items: 1, _id: 0 }
+      ); 
+    return items
+}
