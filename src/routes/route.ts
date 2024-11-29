@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { getUsers } from "../controllers/controllers"
+import { getUserById, getUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -16,10 +16,15 @@ router.get("/", async (req: Request, res: Response, next: NextFunction) => {
 router.get(
   "/users", getUsers
 );
+
+//GET by user by ID
+router.get(
+  "/users/:id", getUserById
+);
+
 // POST new users
 router.post(
-  "/manyusers",
-  async (req: Request, res: Response, next: NextFunction) => {
+  "/manyusers", async (req: Request, res: Response, next: NextFunction) => {
     try {
       const insert = await model.insertMany(req.body);
       res.status(201).json(insert);
@@ -45,19 +50,7 @@ router.post("/new-user", async (req: Request, res: Response, next: NextFunction)
   }
 });
 
-//GET by user by ID
-router.get(
-  "/users/:id",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const id = new mongoose.Types.ObjectId(`${req.params.id}`);
-      const data = await model.findById(id);
-      res.status(200).json(data);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+
 //GET user by username
 router.get(
   "/user/:username",

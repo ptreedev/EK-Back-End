@@ -33,7 +33,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
-  if (error.name === "BSONError") {
+  if (error.name === "BSONError" || error.name === "CastError") {
     res.status(400).json({ message: "Not a valid ID" });
   } else next(error);
   

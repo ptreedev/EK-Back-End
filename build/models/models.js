@@ -12,10 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.selectUsers = void 0;
+exports.findUserById = exports.selectUsers = void 0;
 const model_1 = __importDefault(require("../schemas/model"));
 const selectUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield model_1.default.find();
     return users;
 });
 exports.selectUsers = selectUsers;
+const findUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield model_1.default.findById(id);
+    return user;
+});
+exports.findUserById = findUserById;

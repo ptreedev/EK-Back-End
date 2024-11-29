@@ -24,6 +24,8 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
 }));
 // GET all users
 router.get("/users", controllers_1.getUsers);
+//GET by user by ID
+router.get("/users/:id", controllers_1.getUserById);
 // POST new users
 router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -46,17 +48,6 @@ router.post("/new-user", (req, res, next) => __awaiter(void 0, void 0, void 0, f
         });
         const newUser = yield data.save();
         res.status(201).json(newUser);
-    }
-    catch (error) {
-        next(error);
-    }
-}));
-//GET by user by ID
-router.get("/users/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const id = new mongoose_1.default.Types.ObjectId(`${req.params.id}`);
-        const data = yield model_1.default.findById(id);
-        res.status(200).json(data);
     }
     catch (error) {
         next(error);
