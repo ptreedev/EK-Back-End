@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -43,3 +43,14 @@ const getUserByUsername = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.getUserByUsername = getUserByUsername;
+const getLikesById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { user_id } = req.params;
+        const likes = yield (0, models_1.findLikesById)(user_id);
+        res.status(200).json(likes);
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.getLikesById = getLikesById;

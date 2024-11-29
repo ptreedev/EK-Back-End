@@ -28,6 +28,8 @@ router.get("/users", controllers_1.getUsers);
 router.get("/users/:id", controllers_1.getUserById);
 //GET user by username
 router.get("/user/:username", controllers_1.getUserByUsername);
+//GET an array of users liked items 
+router.get("/likes/:user_id", controllers_1.getLikesById);
 // POST new users
 router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -50,22 +52,6 @@ router.post("/new-user", (req, res, next) => __awaiter(void 0, void 0, void 0, f
         });
         const newUser = yield data.save();
         res.status(201).json(newUser);
-    }
-    catch (error) {
-        next(error);
-    }
-}));
-//GET an array of users liked items 
-router.get("/likes/:user_id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.params.user_id;
-    try {
-        const data = yield model_1.default.find({ "items.likes": id }, { items: 1, _id: 0 });
-        const filt = data[0].items.filter((item) => {
-            if (item.likes.includes(id)) {
-                return item;
-            }
-        });
-        res.status(200).json(filt);
     }
     catch (error) {
         next(error);

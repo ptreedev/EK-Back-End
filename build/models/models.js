@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
+exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
 const model_1 = __importDefault(require("../schemas/model"));
 const selectUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield model_1.default.find();
@@ -37,3 +37,14 @@ const findUserByUsername = (username) => __awaiter(void 0, void 0, void 0, funct
     return user;
 });
 exports.findUserByUsername = findUserByUsername;
+const findLikesById = (user_id) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = yield model_1.default.find({ "items.likes": user_id }, { items: 1, _id: 0 });
+    const likes = data[0].items.filter((item) => {
+        if (item.likes.includes(user_id)) {
+            return item;
+        }
+        ;
+    });
+    return likes;
+});
+exports.findLikesById = findLikesById;
