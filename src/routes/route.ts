@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { getItemById, getItems, getItemsByUsername, getLikesById, getUserById, getUserByUsername, getUsers } from "../controllers/controllers"
+import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getUserById, getUserByUsername, getUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -45,6 +45,11 @@ router.get(
 //GET all items not owned by logged in user
 router.get(
   "/items", getItems
+);
+
+// GET addresses of users upon successful match
+router.get(
+  "/tradesuccess/:matching_id/", getAddresses
 );
 
 // POST new users
@@ -111,38 +116,7 @@ router.post(
 
 
 
-// GET addresses of users upon successful match
-router.get(
-  "/tradesuccess/:matching_id/",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const matching_id = req.params.matching_id;
-    try {
-      const getMatches = await model.aggregate([
-        { $unwind: "$matches" },
-        { $replaceRoot: { newRoot: "$matches" } },
-        { $match: { matching_id: matching_id } },
-      ]);
 
-      const firstMatch = getMatches[0];
-      const secondMatch = getMatches[1];
-      if (firstMatch.settrade && secondMatch.settrade) {
-        const id_one = getMatches[0].match_user_id;
-        const id_two = getMatches[1].match_user_id;
-        const getAddress_one = await model.findOne(
-          { _id: id_one },
-          { address: 1, username: 1 }
-        );
-        const getAddress_two = await model.findOne(
-          { _id: id_two },
-          { address: 1, username: 1 }
-        );
-        res.status(200).json([getAddress_one, getAddress_two]);
-      }
-    } catch (error) {
-      next(error);
-    }
-  }
-);
 
 //PATCH set a trade accept boolean in a users matches subdocument
 router.patch(

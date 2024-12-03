@@ -36,6 +36,8 @@ router.get("/:username/items", controllers_1.getItemsByUsername);
 router.get("/items/:id", controllers_1.getItemById);
 //GET all items not owned by logged in user
 router.get("/items", controllers_1.getItems);
+// GET addresses of users upon successful match
+router.get("/tradesuccess/:matching_id/", controllers_1.getAddresses);
 // POST new users
 router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -88,29 +90,6 @@ router.post("/items/:username", (req, res, next) => __awaiter(void 0, void 0, vo
         }
         else
             res.status(201).json(data);
-    }
-    catch (error) {
-        next(error);
-    }
-}));
-// GET addresses of users upon successful match
-router.get("/tradesuccess/:matching_id/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const matching_id = req.params.matching_id;
-    try {
-        const getMatches = yield model_1.default.aggregate([
-            { $unwind: "$matches" },
-            { $replaceRoot: { newRoot: "$matches" } },
-            { $match: { matching_id: matching_id } },
-        ]);
-        const firstMatch = getMatches[0];
-        const secondMatch = getMatches[1];
-        if (firstMatch.settrade && secondMatch.settrade) {
-            const id_one = getMatches[0].match_user_id;
-            const id_two = getMatches[1].match_user_id;
-            const getAddress_one = yield model_1.default.findOne({ _id: id_one }, { address: 1, username: 1 });
-            const getAddress_two = yield model_1.default.findOne({ _id: id_two }, { address: 1, username: 1 });
-            res.status(200).json([getAddress_one, getAddress_two]);
-        }
     }
     catch (error) {
         next(error);

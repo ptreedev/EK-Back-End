@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findItems = exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
+exports.findMatchedAddresses = exports.findItems = exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
 const model_1 = __importDefault(require("../schemas/model"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const selectUsers = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -74,3 +74,22 @@ const findItems = (username) => __awaiter(void 0, void 0, void 0, function* () {
     return items;
 });
 exports.findItems = findItems;
+const findMatchedAddresses = (matching_id) => __awaiter(void 0, void 0, void 0, function* () {
+    const getMatches = yield model_1.default.aggregate([
+        { $unwind: "$matches" },
+        { $replaceRoot: { newRoot: "$matches" } },
+        { $match: { matching_id: matching_id } },
+    ]);
+    const firstMatch = getMatches[0];
+    const secondMatch = getMatches[1];
+    if (firstMatch.settrade && secondMatch.settrade) {
+        const id_one = getMatches[0].match_user_id;
+        const id_two = getMatches[1].match_user_id;
+        const addressOne = yield model_1.default.findOne({ _id: id_one }, { address: 1, username: 1 });
+        const addressTwo = yield model_1.default.findOne({ _id: id_two }, { address: 1, username: 1 });
+        const addresses = [addressOne, addressTwo];
+        return addresses;
+    }
+    ;
+});
+exports.findMatchedAddresses = findMatchedAddresses;

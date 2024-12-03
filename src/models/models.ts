@@ -41,7 +41,7 @@ export const findItemsByUsername = async (username: string) => {
         { items: 1, _id: 0 }
     );
     return items;
-}
+};
 
 export const findItemById = async (id: string) => {
     const mongoID = mongoose.Types.ObjectId.createFromHexString(id)
@@ -59,6 +59,31 @@ export const findItems = async (username: string) => {
         { $match: { username: { $ne: username } } },
         { $unwind: "$items" },
         { $replaceRoot: { newRoot: "$items" } },
-      ]);
-      return items;
-}
+    ]);
+    return items;
+};
+
+export const findMatchedAddresses = async (matching_id: string) => {
+    const getMatches = await model.aggregate([
+        { $unwind: "$matches" },
+        { $replaceRoot: { newRoot: "$matches" } },
+        { $match: { matching_id: matching_id } },
+    ]);
+
+    const firstMatch = getMatches[0];
+    const secondMatch = getMatches[1];
+    if (firstMatch.settrade && secondMatch.settrade) {
+        const id_one = getMatches[0].match_user_id;
+        const id_two = getMatches[1].match_user_id;
+        const addressOne = await model.findOne(
+            { _id: id_one },
+            { address: 1, username: 1 }
+        );
+        const addressTwo = await model.findOne(
+            { _id: id_two },
+            { address: 1, username: 1 }
+        );
+        const addresses = [addressOne, addressTwo]
+        return addresses
+    };
+};
