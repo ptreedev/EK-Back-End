@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -132,5 +132,16 @@ const getMatches = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     else {
         res.json([]);
     }
+    ;
 });
 exports.getMatches = getMatches;
+const postNewUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const insertedUsers = yield (0, models_1.insertUsers)(req.body);
+        res.status(201).json(insertedUsers);
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.postNewUsers = postNewUsers;

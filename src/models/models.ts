@@ -1,5 +1,6 @@
 import model from "../schemas/model";
 import mongoose from "mongoose";
+import { IUser } from "../schemas/model";
 
 export const selectUsers = async () => {
     const users = await model.find()
@@ -110,4 +111,9 @@ export const findAvailableTrades = async (matching_id: string, username: string)
 export const findMatches = async (user_id: string ) => {
     const matches = await model.find({ _id: user_id }, { matches: 1 });
     return matches[0].matches
+};
+
+export const insertUsers = async (users: IUser) => {
+    const insertedUsers = await model.insertMany(users);
+    return insertedUsers;
 }

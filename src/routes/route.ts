@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers } from "../controllers/controllers"
+import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers, postNewUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -64,14 +64,7 @@ router.get(
 
 // POST new users
 router.post(
-  "/manyusers", async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const insert = await model.insertMany(req.body);
-      res.status(201).json(insert);
-    } catch (error) {
-      next(error);
-    }
-  }
+  "/manyusers", postNewUsers
 );
 // POST a new user
 router.post("/new-user", async (req: Request, res: Response, next: NextFunction) => {

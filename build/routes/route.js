@@ -43,15 +43,7 @@ router.get("/trades/:matching_id/:username", controllers_1.getTrades);
 //GET an array of user matches
 router.get("/matches/:user_id", controllers_1.getMatches);
 // POST new users
-router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const insert = yield model_1.default.insertMany(req.body);
-        res.status(201).json(insert);
-    }
-    catch (error) {
-        next(error);
-    }
-}));
+router.post("/manyusers", controllers_1.postNewUsers);
 // POST a new user
 router.post("/new-user", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {

@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
-
-const itemSchema = new mongoose.Schema({
+interface Item {
+  item_name: string,
+  description: string,
+  img_string: string,
+  likes: string[],
+}
+const itemSchema = new mongoose.Schema<Item>({
   item_name: {
     type: String,
     required: true,
@@ -17,7 +22,15 @@ const itemSchema = new mongoose.Schema({
     type: [],
   },
 });
-
+interface Matches {
+  match_item_name: string,
+  match_user_name: string,
+  match_img_string: string,
+  match_user_id: string,
+  match_item_id: string,
+  settrade?: boolean,
+  matching_id: string
+}
 const matchSchema = new mongoose.Schema({
   match_item_name: {
     type: String,
@@ -47,7 +60,11 @@ const matchSchema = new mongoose.Schema({
     required: true,
   },
 });
-
+interface Address {
+  street: string,
+  city: string,
+  post_code: string
+}
 const addressSchema = new mongoose.Schema({
   street: {
     type: String,
@@ -62,7 +79,13 @@ const addressSchema = new mongoose.Schema({
     required: true,
   },
 });
-
+export interface IUser {
+  name: string,
+  username: string,
+  items: Item,
+  address: Address,
+  matches?: Matches
+}
 const userSchema = new mongoose.Schema({
   name: {
     required: true,
