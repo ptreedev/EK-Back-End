@@ -2,17 +2,15 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers, postNewItem, postNewUser, postNewUsers } from "../controllers/controllers"
+import { createMatchesSubDoc, getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers, postNewItem, postNewUser, postNewUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
-
 router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   res.status(200).json(api);
 });
 
 // GET all users
-
 router.get(
   "/users", getUsers
 );
@@ -75,6 +73,11 @@ router.post(
   "/items/:username", postNewItem
 );
 
+//checks whether a match has occured and if true, creates a match subdocument
+router.post(
+  "/matchcheck", createMatchesSubDoc
+);
+
 //PATCH set a trade accept boolean in a users matches subdocument
 router.patch(
   "/settrade",
@@ -129,6 +132,7 @@ router.patch(
   }
 );
 
+
 //DELETE user by ID
 router.delete(
   "/delete/:id",
@@ -147,76 +151,5 @@ router.delete(
   }
 );
 
-//checks whether a match has occured and if true, creates a match subdocument
-router.post(
-  "/matchcheck",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const user_id = new mongoose.Types.ObjectId(`${req.body.user_id}`);
-      const item_id = new mongoose.Types.ObjectId(`${req.body.item_id}`);
-      const getTheirId = await model.findOne(
-        { "items._id": item_id },
-        { _id: 1, username: 1 }
-      );
-      const getTheirItem = await model.aggregate([
-        { $unwind: "$items" },
-        { $replaceRoot: { newRoot: "$items" } },
-        { $match: { _id: item_id } },
-      ]);
-      const their_id = getTheirId!._id!.toString();
-      const currentMilliseconds = new Date().getTime();
-      const theirObj = {
-        match_user_id: their_id,
-        match_user_name: getTheirId?.username,
-        match_item_name: getTheirItem[0].item_name,
-        match_img_string: getTheirItem[0].img_string,
-        match_item_id: item_id,
-        matching_id: currentMilliseconds,
-      };
-
-      const user_match_check = await model.findOne({
-        $and: [{ _id: user_id }, { "items.likes": their_id }],
-      });
-      const options = { new: true, upsert: true };
-      const their_id_check = await model.findOne({
-        "matches.match_item_id": item_id,
-      });
-      if (user_match_check !== null && their_id_check === null) {
-        const updateMatches = await model.findOneAndUpdate(
-          { _id: user_id },
-          { $addToSet: { matches: theirObj } },
-          options
-        );
-        const userItem = user_match_check.items.map((item) => {
-          if (item.likes.includes(their_id)) {
-            return item;
-          }
-        });
-        const userItemId = userItem[0]?._id?.toString();
-        const ourObj = {
-          match_user_id: user_id,
-          match_user_name: user_match_check.username,
-          match_item_name: userItem[0]?.item_name,
-          match_img_string: userItem[0]?.img_string,
-          match_item_id: userItemId,
-          matching_id: currentMilliseconds,
-        };
-        const updateTheirMatches = await model.findOneAndUpdate(
-          { _id: their_id },
-          { $addToSet: { matches: ourObj } },
-          options
-        );
-        res.status(201).send([updateMatches, updateTheirMatches]);
-      } else {
-        res.status(304).send({ msg: "not modified" });
-      }
-    } catch (error) {
-      if ((error as Error).name === "BSONError") {
-        res.status(422).send({ message: "Invalid request" })
-      }
-      next(error);
-    }
-  }
-);
 
 export default router;

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postNewItem = exports.postNewUser = exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.createMatchesSubDoc = exports.postNewItem = exports.postNewUser = exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -197,3 +197,21 @@ const postNewItem = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     ;
 });
 exports.postNewItem = postNewItem;
+const createMatchesSubDoc = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { user_id, item_id } = req.body;
+        const updatedMatches = yield (0, models_1.createMatch)(user_id, item_id);
+        if (updatedMatches === "not modified") {
+            res.json({ msg: updatedMatches });
+        }
+        else
+            res.status(201).send(updatedMatches);
+    }
+    catch (error) {
+        if (error.name === "BSONError") {
+            res.status(422).send({ message: "Invalid request" });
+        }
+        next(error);
+    }
+});
+exports.createMatchesSubDoc = createMatchesSubDoc;

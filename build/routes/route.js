@@ -48,6 +48,8 @@ router.post("/manyusers", controllers_1.postNewUsers);
 router.post("/new-user", controllers_1.postNewUser);
 //POST add a new item 
 router.post("/items/:username", controllers_1.postNewItem);
+//checks whether a match has occured and if true, creates a match subdocument
+router.post("/matchcheck", controllers_1.createMatchesSubDoc);
 //PATCH set a trade accept boolean in a users matches subdocument
 router.patch("/settrade", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -101,65 +103,6 @@ router.delete("/delete/:id", (req, res, next) => __awaiter(void 0, void 0, void 
     }
     catch (error) {
         res.status(400).json({ message: error.message });
-    }
-}));
-//checks whether a match has occured and if true, creates a match subdocument
-router.post("/matchcheck", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
-    try {
-        const user_id = new mongoose_1.default.Types.ObjectId(`${req.body.user_id}`);
-        const item_id = new mongoose_1.default.Types.ObjectId(`${req.body.item_id}`);
-        const getTheirId = yield model_1.default.findOne({ "items._id": item_id }, { _id: 1, username: 1 });
-        const getTheirItem = yield model_1.default.aggregate([
-            { $unwind: "$items" },
-            { $replaceRoot: { newRoot: "$items" } },
-            { $match: { _id: item_id } },
-        ]);
-        const their_id = getTheirId._id.toString();
-        const currentMilliseconds = new Date().getTime();
-        const theirObj = {
-            match_user_id: their_id,
-            match_user_name: getTheirId === null || getTheirId === void 0 ? void 0 : getTheirId.username,
-            match_item_name: getTheirItem[0].item_name,
-            match_img_string: getTheirItem[0].img_string,
-            match_item_id: item_id,
-            matching_id: currentMilliseconds,
-        };
-        const user_match_check = yield model_1.default.findOne({
-            $and: [{ _id: user_id }, { "items.likes": their_id }],
-        });
-        const options = { new: true, upsert: true };
-        const their_id_check = yield model_1.default.findOne({
-            "matches.match_item_id": item_id,
-        });
-        if (user_match_check !== null && their_id_check === null) {
-            const updateMatches = yield model_1.default.findOneAndUpdate({ _id: user_id }, { $addToSet: { matches: theirObj } }, options);
-            const userItem = user_match_check.items.map((item) => {
-                if (item.likes.includes(their_id)) {
-                    return item;
-                }
-            });
-            const userItemId = (_b = (_a = userItem[0]) === null || _a === void 0 ? void 0 : _a._id) === null || _b === void 0 ? void 0 : _b.toString();
-            const ourObj = {
-                match_user_id: user_id,
-                match_user_name: user_match_check.username,
-                match_item_name: (_c = userItem[0]) === null || _c === void 0 ? void 0 : _c.item_name,
-                match_img_string: (_d = userItem[0]) === null || _d === void 0 ? void 0 : _d.img_string,
-                match_item_id: userItemId,
-                matching_id: currentMilliseconds,
-            };
-            const updateTheirMatches = yield model_1.default.findOneAndUpdate({ _id: their_id }, { $addToSet: { matches: ourObj } }, options);
-            res.status(201).send([updateMatches, updateTheirMatches]);
-        }
-        else {
-            res.status(304).send({ msg: "not modified" });
-        }
-    }
-    catch (error) {
-        if (error.name === "BSONError") {
-            res.status(422).send({ message: "Invalid request" });
-        }
-        next(error);
     }
 }));
 exports.default = router;

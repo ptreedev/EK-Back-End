@@ -135,3 +135,64 @@ export const createNewItem = async (username: string, newItem: Item) => {
         throw e;
     } else return data;
 };
+
+export const createMatch = async (user: string, item: string) => {
+    const user_id = mongoose.Types.ObjectId.createFromHexString(user)
+    const item_id = mongoose.Types.ObjectId.createFromHexString(item)
+    const getTheirId = await model.findOne(
+        { "items._id": item_id },
+        { _id: 1, username: 1 }
+    );
+    const getTheirItem = await model.aggregate([
+        { $unwind: "$items" },
+        { $replaceRoot: { newRoot: "$items" } },
+        { $match: { _id: item_id } },
+    ]);
+    const their_id = getTheirId!._id!.toString();
+    const currentMilliseconds = new Date().getTime();
+    const theirObj = {
+        match_user_id: their_id,
+        match_user_name: getTheirId?.username,
+        match_item_name: getTheirItem[0].item_name,
+        match_img_string: getTheirItem[0].img_string,
+        match_item_id: item_id,
+        matching_id: currentMilliseconds,
+    };
+
+    const user_match_check = await model.findOne({
+        $and: [{ _id: user_id }, { "items.likes": their_id }],
+    });
+    const options = { new: true, upsert: true };
+    const their_id_check = await model.findOne({
+        "matches.match_item_id": item_id,
+    });
+    if (user_match_check !== null && their_id_check === null) {
+        const updateMatches = await model.findOneAndUpdate(
+            { _id: user_id },
+            { $addToSet: { matches: theirObj } },
+            options
+        );
+        const userItem = user_match_check.items.map((item) => {
+            if (item.likes.includes(their_id)) {
+                return item;
+            }
+        });
+        const userItemId = userItem[0]?._id?.toString();
+        const ourObj = {
+            match_user_id: user_id,
+            match_user_name: user_match_check.username,
+            match_item_name: userItem[0]?.item_name,
+            match_img_string: userItem[0]?.img_string,
+            match_item_id: userItemId,
+            matching_id: currentMilliseconds,
+        };
+        const updateTheirMatches = await model.findOneAndUpdate(
+            { _id: their_id },
+            { $addToSet: { matches: ourObj } },
+            options
+        );
+        return [updateMatches, updateTheirMatches]
+    } else {
+        return "not modified";
+    };
+};

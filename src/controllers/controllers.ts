@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades, findMatches, insertUsers, createUser, createNewItem } from "../models/models"
+import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades, findMatches, insertUsers, createUser, createNewItem, createMatch } from "../models/models"
 import { Item, IUser } from "../schemas/model";
+import { create } from "domain";
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -159,3 +160,19 @@ export const postNewItem = async (req: Request, res: Response, next: NextFunctio
         next(error)
     };
 };
+
+export const createMatchesSubDoc = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { user_id, item_id } = req.body;
+        const updatedMatches = await createMatch(user_id, item_id);
+        if (updatedMatches === "not modified") {
+            res.json({ msg: updatedMatches })
+        } else
+            res.status(201).send(updatedMatches);
+    } catch (error) {
+        if ((error as Error).name === "BSONError") {
+            res.status(422).send({ message: "Invalid request" })
+        }
+        next(error);
+    }
+}
