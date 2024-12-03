@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -58,10 +58,21 @@ const getItemsByUsername = (req, res, next) => __awaiter(void 0, void 0, void 0,
     try {
         const { username } = req.params;
         const data = yield (0, models_1.findItemsByUsername)(username);
-        res.status(200).json(data.items);
+        res.status(200).json(data === null || data === void 0 ? void 0 : data.items);
     }
     catch (error) {
         next(error);
     }
 });
 exports.getItemsByUsername = getItemsByUsername;
+const getItemById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const items = yield (0, models_1.findItemById)(id);
+        res.status(200).json(items);
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.getItemById = getItemById;

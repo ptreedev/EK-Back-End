@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername } from "../models/models"
+import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById } from "../models/models"
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -44,8 +44,18 @@ export const getItemsByUsername = async (req: Request, res: Response, next: Next
     try {
         const { username } = req.params;
         const data = await findItemsByUsername(username);
-        res.status(200).json(data!.items);
+        res.status(200).json(data?.items);
     } catch (error) {
         next(error);
     }
 };
+
+export const getItemById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { id } = req.params;
+        const items = await findItemById(id);
+        res.status(200).json(items)
+    } catch (error) {
+        next(error);
+    }
+}

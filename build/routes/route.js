@@ -32,6 +32,8 @@ router.get("/user/:username", controllers_1.getUserByUsername);
 router.get("/likes/:user_id", controllers_1.getLikesById);
 //GET a users items 
 router.get("/:username/items", controllers_1.getItemsByUsername);
+//GET items by item_ID
+router.get("/items/:id", controllers_1.getItemById);
 // POST new users
 router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -84,24 +86,6 @@ router.post("/items/:username", (req, res, next) => __awaiter(void 0, void 0, vo
         }
         else
             res.status(201).json(data);
-    }
-    catch (error) {
-        next(error);
-    }
-}));
-//GET items by item_ID
-router.get("/items/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const id = new mongoose_1.default.Types.ObjectId(req.params.id);
-        const data = yield model_1.default
-            .aggregate([
-            { $unwind: "$items" },
-            { $replaceRoot: { newRoot: "$items" } },
-            { $match: { _id: id } },
-        ])
-            .then((data) => {
-            res.json(data[0]);
-        });
     }
     catch (error) {
         next(error);
