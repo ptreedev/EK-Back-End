@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -103,3 +103,18 @@ const getAddresses = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.getAddresses = getAddresses;
+const getTrades = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (req.params.matching_id) {
+            const { matching_id, username } = req.params;
+            const availableTrades = yield (0, models_1.findAvailableTrades)(matching_id, username);
+            res.status(200).json(availableTrades);
+        }
+        ;
+    }
+    catch (error) {
+        next(error);
+    }
+    ;
+});
+exports.getTrades = getTrades;

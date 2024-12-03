@@ -87,3 +87,22 @@ export const findMatchedAddresses = async (matching_id: string) => {
         return addresses
     };
 };
+
+export const findAvailableTrades = async (matching_id: string, username: string) => {
+    const getMatches = await model.aggregate([
+        { $unwind: "$matches" },
+        { $replaceRoot: { newRoot: "$matches" } },
+        { $match: { matching_id: matching_id } },
+    ]);
+    if (getMatches[0].match_user_name !== username) {
+        const e = new Error("invalid username");
+        throw e;
+    } else if (getMatches) {
+        if (getMatches[0].match_user_name === username) {
+            const list = [getMatches[1], getMatches[0]];
+            return list;
+        } else {
+            return getMatches;
+        };
+    };
+};

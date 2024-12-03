@@ -38,6 +38,8 @@ router.get("/items/:id", controllers_1.getItemById);
 router.get("/items", controllers_1.getItems);
 // GET addresses of users upon successful match
 router.get("/tradesuccess/:matching_id/", controllers_1.getAddresses);
+//GET available trades for a user
+router.get("/trades/:matching_id/:username", controllers_1.getTrades);
 // POST new users
 router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -132,36 +134,6 @@ router.patch("/items/:id", (req, res, next) => __awaiter(void 0, void 0, void 0,
         }
         else
             res.status(400).json({ message: error.message });
-    }
-}));
-//GET available trades for a user
-router.get("/trades/:matching_id/:username", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        if (req.params.matching_id) {
-            const matching_id = req.params.matching_id;
-            const username = req.params.username;
-            const getMatches = yield model_1.default.aggregate([
-                { $unwind: "$matches" },
-                { $replaceRoot: { newRoot: "$matches" } },
-                { $match: { matching_id: matching_id } },
-            ]);
-            if (getMatches[0].match_user_name !== username) {
-                const e = new Error("invalid username");
-                throw e;
-            }
-            else if (getMatches) {
-                if (getMatches[0].match_user_name === username) {
-                    const list = [getMatches[1], getMatches[0]];
-                    res.status(200).json(list);
-                }
-                else {
-                    res.status(200).json(getMatches);
-                }
-            }
-        }
-    }
-    catch (error) {
-        next(error);
     }
 }));
 //DELETE user by ID

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findMatchedAddresses = exports.findItems = exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
+exports.findAvailableTrades = exports.findMatchedAddresses = exports.findItems = exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
 const model_1 = __importDefault(require("../schemas/model"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const selectUsers = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -93,3 +93,26 @@ const findMatchedAddresses = (matching_id) => __awaiter(void 0, void 0, void 0, 
     ;
 });
 exports.findMatchedAddresses = findMatchedAddresses;
+const findAvailableTrades = (matching_id, username) => __awaiter(void 0, void 0, void 0, function* () {
+    const getMatches = yield model_1.default.aggregate([
+        { $unwind: "$matches" },
+        { $replaceRoot: { newRoot: "$matches" } },
+        { $match: { matching_id: matching_id } },
+    ]);
+    if (getMatches[0].match_user_name !== username) {
+        const e = new Error("invalid username");
+        throw e;
+    }
+    else if (getMatches) {
+        if (getMatches[0].match_user_name === username) {
+            const list = [getMatches[1], getMatches[0]];
+            return list;
+        }
+        else {
+            return getMatches;
+        }
+        ;
+    }
+    ;
+});
+exports.findAvailableTrades = findAvailableTrades;

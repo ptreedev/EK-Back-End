@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getUserById, getUserByUsername, getUsers } from "../controllers/controllers"
+import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getTrades, getUserById, getUserByUsername, getUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -52,6 +52,11 @@ router.get(
   "/tradesuccess/:matching_id/", getAddresses
 );
 
+//GET available trades for a user
+router.get(
+  "/trades/:matching_id/:username", getTrades
+);
+
 // POST new users
 router.post(
   "/manyusers", async (req: Request, res: Response, next: NextFunction) => {
@@ -79,7 +84,6 @@ router.post("/new-user", async (req: Request, res: Response, next: NextFunction)
     next(error);
   }
 });
-
 
 //POST add a new item 
 router.post(
@@ -113,10 +117,6 @@ router.post(
     }
   }
 );
-
-
-
-
 
 //PATCH set a trade accept boolean in a users matches subdocument
 router.patch(
@@ -168,39 +168,6 @@ router.patch(
       if ((error as Error).message === "hex string must be 24 characters") {
         res.status(422).json({ message: "Invalid request" })
       } else res.status(400).json({ message: (error as Error).message });
-    }
-  }
-);
-//GET available trades for a user
-router.get(
-  "/trades/:matching_id/:username",
-
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      if (req.params.matching_id) {
-        const matching_id: string = req.params.matching_id;
-        const username: string = req.params.username;
-        const getMatches = await model.aggregate([
-          { $unwind: "$matches" },
-          { $replaceRoot: { newRoot: "$matches" } },
-          { $match: { matching_id: matching_id } },
-        ]);
-        if (getMatches[0].match_user_name !== username) {
-          const e = new Error("invalid username");
-          throw e;
-        } else
-          if (getMatches) {
-            if (getMatches[0].match_user_name === username) {
-              const list = [getMatches[1], getMatches[0]];
-              res.status(200).json(list);
-            } else {
-              res.status(200).json(getMatches);
-            }
-          }
-      }
-    }
-    catch (error) {
-      next(error)
     }
   }
 );
