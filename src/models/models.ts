@@ -1,6 +1,6 @@
 import model from "../schemas/model";
 import mongoose from "mongoose";
-import { IUser } from "../schemas/model";
+import { IUser, Item } from "../schemas/model";
 
 export const selectUsers = async () => {
     const users = await model.find()
@@ -85,7 +85,7 @@ export const findMatchedAddresses = async (matching_id: string) => {
             { address: 1, username: 1 }
         );
         const addresses = [addressOne, addressTwo]
-        return addresses
+        return addresses;
     };
 };
 
@@ -110,22 +110,28 @@ export const findAvailableTrades = async (matching_id: string, username: string)
 
 export const findMatches = async (user_id: string) => {
     const matches = await model.find({ _id: user_id }, { matches: 1 });
-    return matches[0].matches
+    return matches[0].matches;
 };
 
 export const insertUsers = async (users: IUser) => {
     const insertedUsers = await model.insertMany(users);
     return insertedUsers;
-}
+};
 
 export const createUser = async (data: IUser) => {
-    const user = new model({
-        name: data.name,
-        username: data.username,
-        items: data.items,
-        address: data.address,
-        matches: data.matches,
-    });
+    const user = new model(data);
     const newUser = await user.save();
-    return newUser
-}
+    return newUser;
+};
+
+export const createNewItem = async (username: string, newItem: Item) => {
+    const data = await model.findOneAndUpdate(
+        { username: username },
+        { $addToSet: { items: newItem } },
+        { new: true });
+    if (data === null) {
+        const e = new Error("Username not found");
+        e.name = "SyntaxError";
+        throw e;
+    } else return data;
+};

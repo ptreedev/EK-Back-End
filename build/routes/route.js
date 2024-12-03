@@ -45,53 +45,9 @@ router.get("/matches/:user_id", controllers_1.getMatches);
 // POST new users
 router.post("/manyusers", controllers_1.postNewUsers);
 // POST a new user
-router.post("/new-user", controllers_1.postNewUser
-// async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const data = new model({
-//       name: req.body.name,
-//       username: req.body.username,
-//       items: req.body.items,
-//       address: req.body.address,
-//       matches: req.body.matches,
-//     });
-//     const newUser = await data.save();
-//     res.status(201).json(newUser);
-//   } catch (error) {
-//     next(error);
-//   }
-// }
-);
+router.post("/new-user", controllers_1.postNewUser);
 //POST add a new item 
-router.post("/items/:username", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const username = req.params.username;
-        const newItem = {
-            item_name: req.body.item_name,
-            description: req.body.description,
-            img_string: req.body.img_string,
-            likes: [],
-        };
-        if (newItem.item_name === undefined || newItem.description === undefined || newItem.img_string === undefined) {
-            const e = new Error("Validation Failed");
-            e.name = "ValidationError";
-            throw e;
-        }
-        ;
-        const options = { new: true };
-        const data = yield model_1.default.findOneAndUpdate({ username: username }, { $addToSet: { items: newItem } }, options);
-        if (data === null) {
-            const e = new Error("Username not found");
-            e.name = "SyntaxError";
-            throw e;
-        }
-        else
-            res.status(201).json(data);
-    }
-    catch (error) {
-        next(error);
-    }
-}));
+router.post("/items/:username", controllers_1.postNewItem);
 //PATCH set a trade accept boolean in a users matches subdocument
 router.patch("/settrade", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {

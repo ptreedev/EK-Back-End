@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers, postNewUser, postNewUsers } from "../controllers/controllers"
+import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers, postNewItem, postNewUser, postNewUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -68,54 +68,11 @@ router.post(
 );
 // POST a new user
 router.post("/new-user", postNewUser
-  // async (req: Request, res: Response, next: NextFunction) => {
-  //   try {
-  //     const data = new model({
-  //       name: req.body.name,
-  //       username: req.body.username,
-  //       items: req.body.items,
-  //       address: req.body.address,
-  //       matches: req.body.matches,
-  //     });
-  //     const newUser = await data.save();
-  //     res.status(201).json(newUser);
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
 );
 
 //POST add a new item 
 router.post(
-  "/items/:username",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const username = req.params.username;
-      const newItem = {
-        item_name: req.body.item_name,
-        description: req.body.description,
-        img_string: req.body.img_string,
-        likes: [],
-      };
-      if (newItem.item_name === undefined || newItem.description === undefined || newItem.img_string === undefined) {
-        const e = new Error("Validation Failed");
-        e.name = "ValidationError";
-        throw e;
-      };
-      const options = { new: true };
-      const data = await model.findOneAndUpdate(
-        { username: username },
-        { $addToSet: { items: newItem } },
-        options);
-      if (data === null) {
-        const e = new Error("Username not found");
-        e.name = "SyntaxError";
-        throw e;
-      } else res.status(201).json(data);
-    } catch (error) {
-      next(error)
-    }
-  }
+  "/items/:username", postNewItem
 );
 
 //PATCH set a trade accept boolean in a users matches subdocument

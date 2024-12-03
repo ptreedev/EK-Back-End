@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postNewUser = exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.postNewItem = exports.postNewUser = exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -19,6 +19,7 @@ const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     catch (error) {
         next(error);
     }
+    ;
 });
 exports.getUsers = getUsers;
 const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -30,6 +31,7 @@ const getUserById = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     catch (error) {
         next(error);
     }
+    ;
 });
 exports.getUserById = getUserById;
 const getUserByUsername = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,6 +43,7 @@ const getUserByUsername = (req, res, next) => __awaiter(void 0, void 0, void 0, 
     catch (error) {
         next(error);
     }
+    ;
 });
 exports.getUserByUsername = getUserByUsername;
 const getLikesById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -52,6 +55,7 @@ const getLikesById = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     catch (error) {
         next(error);
     }
+    ;
 });
 exports.getLikesById = getLikesById;
 const getItemsByUsername = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -63,6 +67,7 @@ const getItemsByUsername = (req, res, next) => __awaiter(void 0, void 0, void 0,
     catch (error) {
         next(error);
     }
+    ;
 });
 exports.getItemsByUsername = getItemsByUsername;
 const getItemById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -74,6 +79,7 @@ const getItemById = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     catch (error) {
         next(error);
     }
+    ;
 });
 exports.getItemById = getItemById;
 const getItems = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -90,6 +96,7 @@ const getItems = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     catch (error) {
         res.status(500).json({ message: error.message });
     }
+    ;
 });
 exports.getItems = getItems;
 const getAddresses = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -101,6 +108,7 @@ const getAddresses = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     catch (error) {
         next(error);
     }
+    ;
 });
 exports.getAddresses = getAddresses;
 const getTrades = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -128,6 +136,7 @@ const getMatches = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         catch (error) {
             next(error);
         }
+        ;
     }
     else {
         res.json([]);
@@ -143,6 +152,7 @@ const postNewUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     catch (error) {
         next(error);
     }
+    ;
 });
 exports.postNewUsers = postNewUsers;
 const postNewUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -160,5 +170,30 @@ const postNewUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     catch (error) {
         next(error);
     }
+    ;
 });
 exports.postNewUser = postNewUser;
+const postNewItem = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { username } = req.params;
+        const newItem = {
+            item_name: req.body.item_name,
+            description: req.body.description,
+            img_string: req.body.img_string,
+            likes: [],
+        };
+        if (newItem.item_name === undefined || newItem.description === undefined || newItem.img_string === undefined) {
+            const e = new Error("Validation Failed");
+            e.name = "ValidationError";
+            throw e;
+        }
+        ;
+        const updatedDocument = yield (0, models_1.createNewItem)(username, newItem);
+        res.status(201).json(updatedDocument);
+    }
+    catch (error) {
+        next(error);
+    }
+    ;
+});
+exports.postNewItem = postNewItem;

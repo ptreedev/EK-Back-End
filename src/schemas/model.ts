@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-interface Item {
+export interface Item {
   item_name: string,
   description: string,
   img_string: string,
