@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { getItemById, getItemsByUsername, getLikesById, getUserById, getUserByUsername, getUsers } from "../controllers/controllers"
+import { getItemById, getItems, getItemsByUsername, getLikesById, getUserById, getUserByUsername, getUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -40,6 +40,11 @@ router.get(
 //GET items by item_ID
 router.get(
   "/items/:id", getItemById
+);
+
+//GET all items not owned by logged in user
+router.get(
+  "/items", getItems
 );
 
 // POST new users
@@ -105,23 +110,7 @@ router.post(
 );
 
 
-//GET all items
-router.get(
-  "/items",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const username = req.query.username;
-    try {
-      const data = await model.aggregate([
-        { $match: { username: { $ne: username } } },
-        { $unwind: "$items" },
-        { $replaceRoot: { newRoot: "$items" } },
-      ]);
-      res.status(200).json(data);
-    } catch (error) {
-      res.status(500).json({ message: (error as Error).message });
-    }
-  }
-);
+
 // GET addresses of users upon successful match
 router.get(
   "/tradesuccess/:matching_id/",

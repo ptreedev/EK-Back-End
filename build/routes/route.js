@@ -34,6 +34,8 @@ router.get("/likes/:user_id", controllers_1.getLikesById);
 router.get("/:username/items", controllers_1.getItemsByUsername);
 //GET items by item_ID
 router.get("/items/:id", controllers_1.getItemById);
+//GET all items not owned by logged in user
+router.get("/items", controllers_1.getItems);
 // POST new users
 router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -89,21 +91,6 @@ router.post("/items/:username", (req, res, next) => __awaiter(void 0, void 0, vo
     }
     catch (error) {
         next(error);
-    }
-}));
-//GET all items
-router.get("/items", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const username = req.query.username;
-    try {
-        const data = yield model_1.default.aggregate([
-            { $match: { username: { $ne: username } } },
-            { $unwind: "$items" },
-            { $replaceRoot: { newRoot: "$items" } },
-        ]);
-        res.status(200).json(data);
-    }
-    catch (error) {
-        res.status(500).json({ message: error.message });
     }
 }));
 // GET addresses of users upon successful match

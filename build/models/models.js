@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
+exports.findItems = exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
 const model_1 = __importDefault(require("../schemas/model"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const selectUsers = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,3 +65,12 @@ const findItemById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return data[0];
 });
 exports.findItemById = findItemById;
+const findItems = (username) => __awaiter(void 0, void 0, void 0, function* () {
+    const items = yield model_1.default.aggregate([
+        { $match: { username: { $ne: username } } },
+        { $unwind: "$items" },
+        { $replaceRoot: { newRoot: "$items" } },
+    ]);
+    return items;
+});
+exports.findItems = findItems;

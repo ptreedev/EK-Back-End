@@ -82,9 +82,9 @@ describe("GET Endpoint Testing", () => {
     });
   });
   describe("GET: /api/items", () => {
-    it("200: returns all items", async () => {
+    it("200: returns all items not owned by the current user", async () => {
       await request(app)
-        .get("/api/items")
+        .get("/api/items?username=peteisking")
         .expect(200)
         .then(({ body }) => {
           expect(body).toHaveProperty("length");

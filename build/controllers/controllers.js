@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -76,3 +76,19 @@ const getItemById = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.getItemById = getItemById;
+const getItems = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { username } = req.query;
+        if (typeof username !== "string") {
+            throw new Error("Query param 'username' has to be of type string");
+        }
+        else {
+            const items = yield (0, models_1.findItems)(username);
+            res.status(200).json(items);
+        }
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+exports.getItems = getItems;
