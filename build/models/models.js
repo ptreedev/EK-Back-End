@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.insertUsers = exports.findMatches = exports.findAvailableTrades = exports.findMatchedAddresses = exports.findItems = exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
+exports.createUser = exports.insertUsers = exports.findMatches = exports.findAvailableTrades = exports.findMatchedAddresses = exports.findItems = exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
 const model_1 = __importDefault(require("../schemas/model"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const selectUsers = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -126,3 +126,15 @@ const insertUsers = (users) => __awaiter(void 0, void 0, void 0, function* () {
     return insertedUsers;
 });
 exports.insertUsers = insertUsers;
+const createUser = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = new model_1.default({
+        name: data.name,
+        username: data.username,
+        items: data.items,
+        address: data.address,
+        matches: data.matches,
+    });
+    const newUser = yield user.save();
+    return newUser;
+});
+exports.createUser = createUser;

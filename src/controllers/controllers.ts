@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades, findMatches, insertUsers } from "../models/models"
+import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades, findMatches, insertUsers, createUser } from "../models/models"
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -88,36 +88,52 @@ export const getAddresses = async (req: Request, res: Response, next: NextFuncti
 
 export const getTrades = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      if (req.params.matching_id) {
-        const {matching_id, username} = req.params;
-        const availableTrades = await findAvailableTrades(matching_id, username);
-        res.status(200).json(availableTrades)
-      };
+        if (req.params.matching_id) {
+            const { matching_id, username } = req.params;
+            const availableTrades = await findAvailableTrades(matching_id, username);
+            res.status(200).json(availableTrades)
+        };
     }
     catch (error) {
-      next(error)
+        next(error)
     };
-  };
+};
 
-  export const getMatches = async (req: Request, res: Response, next: NextFunction) => {
+export const getMatches = async (req: Request, res: Response, next: NextFunction) => {
     if (req.params.user_id) {
-      try {
-        const { user_id } = req.params;
-        const matches = await findMatches(user_id)
-        res.status(200).json(matches);
-      } catch (error) {
-        next(error);
-      }
+        try {
+            const { user_id } = req.params;
+            const matches = await findMatches(user_id)
+            res.status(200).json(matches);
+        } catch (error) {
+            next(error);
+        }
     } else {
-      res.json([]);
+        res.json([]);
     };
-  };
+};
 
-  export const postNewUsers = async (req: Request, res: Response, next: NextFunction) => {
+export const postNewUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const insertedUsers = await insertUsers(req.body);
-      res.status(201).json(insertedUsers);
+        const insertedUsers = await insertUsers(req.body);
+        res.status(201).json(insertedUsers);
     } catch (error) {
-      next(error);
+        next(error);
     }
-  }
+}
+
+export const postNewUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = {
+            name: req.body.name,
+            username: req.body.username,
+            items: req.body.items,
+            address: req.body.address,
+            matches: req.body.matches,
+        };
+        const newUser = await createUser(data);
+        res.status(201).json(newUser);
+    } catch (error) {
+        next(error);
+    }
+}

@@ -108,7 +108,7 @@ export const findAvailableTrades = async (matching_id: string, username: string)
     };
 };
 
-export const findMatches = async (user_id: string ) => {
+export const findMatches = async (user_id: string) => {
     const matches = await model.find({ _id: user_id }, { matches: 1 });
     return matches[0].matches
 };
@@ -116,4 +116,16 @@ export const findMatches = async (user_id: string ) => {
 export const insertUsers = async (users: IUser) => {
     const insertedUsers = await model.insertMany(users);
     return insertedUsers;
+}
+
+export const createUser = async (data: IUser) => {
+    const user = new model({
+        name: data.name,
+        username: data.username,
+        items: data.items,
+        address: data.address,
+        matches: data.matches,
+    });
+    const newUser = await user.save();
+    return newUser
 }

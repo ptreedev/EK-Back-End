@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.postNewUser = exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -145,3 +145,20 @@ const postNewUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.postNewUsers = postNewUsers;
+const postNewUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = {
+            name: req.body.name,
+            username: req.body.username,
+            items: req.body.items,
+            address: req.body.address,
+            matches: req.body.matches,
+        };
+        const newUser = yield (0, models_1.createUser)(data);
+        res.status(201).json(newUser);
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.postNewUser = postNewUser;

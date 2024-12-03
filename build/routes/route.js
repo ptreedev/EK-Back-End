@@ -45,22 +45,23 @@ router.get("/matches/:user_id", controllers_1.getMatches);
 // POST new users
 router.post("/manyusers", controllers_1.postNewUsers);
 // POST a new user
-router.post("/new-user", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const data = new model_1.default({
-            name: req.body.name,
-            username: req.body.username,
-            items: req.body.items,
-            address: req.body.address,
-            matches: req.body.matches,
-        });
-        const newUser = yield data.save();
-        res.status(201).json(newUser);
-    }
-    catch (error) {
-        next(error);
-    }
-}));
+router.post("/new-user", controllers_1.postNewUser
+// async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     const data = new model({
+//       name: req.body.name,
+//       username: req.body.username,
+//       items: req.body.items,
+//       address: req.body.address,
+//       matches: req.body.matches,
+//     });
+//     const newUser = await data.save();
+//     res.status(201).json(newUser);
+//   } catch (error) {
+//     next(error);
+//   }
+// }
+);
 //POST add a new item 
 router.post("/items/:username", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {

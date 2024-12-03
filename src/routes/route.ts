@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers, postNewUsers } from "../controllers/controllers"
+import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers, postNewUser, postNewUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -67,21 +67,23 @@ router.post(
   "/manyusers", postNewUsers
 );
 // POST a new user
-router.post("/new-user", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const data = new model({
-      name: req.body.name,
-      username: req.body.username,
-      items: req.body.items,
-      address: req.body.address,
-      matches: req.body.matches,
-    });
-    const newUser = await data.save();
-    res.status(201).json(newUser);
-  } catch (error) {
-    next(error);
-  }
-});
+router.post("/new-user", postNewUser
+  // async (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     const data = new model({
+  //       name: req.body.name,
+  //       username: req.body.username,
+  //       items: req.body.items,
+  //       address: req.body.address,
+  //       matches: req.body.matches,
+  //     });
+  //     const newUser = await data.save();
+  //     res.status(201).json(newUser);
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+);
 
 //POST add a new item 
 router.post(
