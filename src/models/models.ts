@@ -106,3 +106,8 @@ export const findAvailableTrades = async (matching_id: string, username: string)
         };
     };
 };
+
+export const findMatches = async (user_id: string ) => {
+    const matches = await model.find({ _id: user_id }, { matches: 1 });
+    return matches[0].matches
+}

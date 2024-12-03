@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -118,3 +118,19 @@ const getTrades = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     ;
 });
 exports.getTrades = getTrades;
+const getMatches = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    if (req.params.user_id) {
+        try {
+            const { user_id } = req.params;
+            const matches = yield (0, models_1.findMatches)(user_id);
+            res.status(200).json(matches);
+        }
+        catch (error) {
+            next(error);
+        }
+    }
+    else {
+        res.json([]);
+    }
+});
+exports.getMatches = getMatches;

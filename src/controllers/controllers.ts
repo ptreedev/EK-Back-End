@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades } from "../models/models"
+import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades, findMatches } from "../models/models"
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -98,3 +98,17 @@ export const getTrades = async (req: Request, res: Response, next: NextFunction)
       next(error)
     };
   };
+
+  export const getMatches = async (req: Request, res: Response, next: NextFunction) => {
+    if (req.params.user_id) {
+      try {
+        const { user_id } = req.params;
+        const matches = await findMatches(user_id)
+        res.status(200).json(matches);
+      } catch (error) {
+        next(error);
+      }
+    } else {
+      res.json([]);
+    }
+  }

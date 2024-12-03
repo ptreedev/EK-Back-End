@@ -40,6 +40,8 @@ router.get("/items", controllers_1.getItems);
 router.get("/tradesuccess/:matching_id/", controllers_1.getAddresses);
 //GET available trades for a user
 router.get("/trades/:matching_id/:username", controllers_1.getTrades);
+//GET an array of user matches
+router.get("/matches/:user_id", controllers_1.getMatches);
 // POST new users
 router.post("/manyusers", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -150,22 +152,6 @@ router.delete("/delete/:id", (req, res, next) => __awaiter(void 0, void 0, void 
     }
     catch (error) {
         res.status(400).json({ message: error.message });
-    }
-}));
-//gets an array of user matches
-router.get("/matches/:user_id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    if (req.params.user_id) {
-        try {
-            const id = new mongoose_1.default.Types.ObjectId(`${req.params.user_id}`);
-            const data = yield model_1.default.find({ _id: id }, { matches: 1 });
-            res.json(data[0].matches);
-        }
-        catch (error) {
-            next(error);
-        }
-    }
-    else {
-        res.json([]);
     }
 }));
 //checks whether a match has occured and if true, creates a match subdocument

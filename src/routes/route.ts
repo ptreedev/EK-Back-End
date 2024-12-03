@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getTrades, getUserById, getUserByUsername, getUsers } from "../controllers/controllers"
+import { getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -55,6 +55,11 @@ router.get(
 //GET available trades for a user
 router.get(
   "/trades/:matching_id/:username", getTrades
+);
+
+//GET an array of user matches
+router.get(
+  "/matches/:user_id", getMatches
 );
 
 // POST new users
@@ -189,23 +194,7 @@ router.delete(
     }
   }
 );
-//gets an array of user matches
-router.get(
-  "/matches/:user_id",
-  async (req: Request, res: Response, next: NextFunction) => {
-    if (req.params.user_id) {
-      try {
-        const id = new mongoose.Types.ObjectId(`${req.params.user_id}`);
-        const data = await model.find({ _id: id }, { matches: 1 });
-        res.json(data[0].matches);
-      } catch (error) {
-        next(error);
-      }
-    } else {
-      res.json([]);
-    }
-  }
-);
+
 //checks whether a match has occured and if true, creates a match subdocument
 router.post(
   "/matchcheck",
