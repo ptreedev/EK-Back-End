@@ -1,5 +1,5 @@
 import model from "../schemas/model";
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { IUser, Item } from "../schemas/model";
 
 export const selectUsers = async () => {
@@ -208,4 +208,15 @@ export const updateTrade = async (match_id: string, bool: boolean) => {
         e.name = "ValidationError";
         throw e;
     } else return changedBool;
-}
+};
+
+export const updateLikes = async (id: string, likedId: string) => {
+    const formattedId = mongoose.Types.ObjectId.createFromHexString(id);
+    const formattedLikedId = mongoose.Types.ObjectId.createFromHexString(likedId);
+    const updatedLikes = await model.findOneAndUpdate(
+        { "items._id": formattedId },
+        { $addToSet: { "items.$.likes": formattedLikedId } },
+        { new: true }
+    );
+    return updatedLikes;
+};

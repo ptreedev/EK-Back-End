@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const model_1 = __importDefault(require("../schemas/model"));
-const mongoose_1 = __importDefault(require("mongoose"));
 const api_json_1 = __importDefault(require("../../api.json"));
 const controllers_1 = require("../controllers/controllers");
 const router = express_1.default.Router();
@@ -53,23 +52,7 @@ router.post("/matchcheck", controllers_1.createMatchesSubDoc);
 //PATCH set a trade accept boolean in a users matches subdocument
 router.patch("/settrade", controllers_1.patchTrade);
 //PATCH user items by adding a like
-router.patch("/items/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const id = new mongoose_1.default.Types.ObjectId(req.params.id);
-        const updatedData = req.body;
-        const data = mongoose_1.default.Types.ObjectId.createFromHexString(updatedData.likes);
-        const options = { new: true };
-        const result = yield model_1.default.findOneAndUpdate({ "items._id": id }, { $addToSet: { "items.$.likes": data } }, options);
-        res.status(200).send(result);
-    }
-    catch (error) {
-        if (error.message === "hex string must be 24 characters") {
-            res.status(422).json({ message: "Invalid request" });
-        }
-        else
-            res.status(400).json({ message: error.message });
-    }
-}));
+router.patch("/items/:id", controllers_1.patchItem);
 //DELETE user by ID
 router.delete("/delete/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {

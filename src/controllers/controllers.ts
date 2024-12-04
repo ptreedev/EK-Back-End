@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades, findMatches, insertUsers, createUser, createNewItem, createMatch, updateTrade } from "../models/models"
+import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades, findMatches, insertUsers, createUser, createNewItem, createMatch, updateTrade, updateLikes } from "../models/models"
 import { Item, IUser } from "../schemas/model";
-import { create } from "domain";
+import mongoose, { ObjectId } from "mongoose";
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -189,3 +189,16 @@ export const patchTrade = async (req: Request, res: Response, next: NextFunction
         next(error);
     };
 };
+
+export const patchItem = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if (req.body.likes) {
+            const { id } = req.params;
+            const likedId: string = req.body.likes;
+            const updatedLikes = await updateLikes(id, likedId);
+            res.status(200).send(updatedLikes);
+        } else res.status(422).send({ message: "Invalid request, check submitted fields" })
+    } catch (error) {
+        next(error)
+    }
+}

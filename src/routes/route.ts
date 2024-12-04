@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { createMatchesSubDoc, getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers, patchTrade, postNewItem, postNewUser, postNewUsers } from "../controllers/controllers"
+import { createMatchesSubDoc, getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers, patchItem, patchTrade, postNewItem, postNewUser, postNewUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -85,28 +85,7 @@ router.patch(
 
 //PATCH user items by adding a like
 router.patch(
-  "/items/:id",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const id = new mongoose.Types.ObjectId(req.params.id);
-
-      const updatedData = req.body;
-      const data = mongoose.Types.ObjectId.createFromHexString(updatedData.likes);
-      const options = { new: true };
-
-      const result = await model.findOneAndUpdate(
-        { "items._id": id },
-        { $addToSet: { "items.$.likes": data } },
-        options
-      );
-
-      res.status(200).send(result);
-    } catch (error) {
-      if ((error as Error).message === "hex string must be 24 characters") {
-        res.status(422).json({ message: "Invalid request" })
-      } else res.status(400).json({ message: (error as Error).message });
-    }
-  }
+  "/items/:id", patchItem
 );
 
 

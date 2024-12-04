@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.patchTrade = exports.createMatchesSubDoc = exports.postNewItem = exports.postNewUser = exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.patchItem = exports.patchTrade = exports.createMatchesSubDoc = exports.postNewItem = exports.postNewUser = exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -231,3 +231,19 @@ const patchTrade = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     ;
 });
 exports.patchTrade = patchTrade;
+const patchItem = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (req.body.likes) {
+            const { id } = req.params;
+            const likedId = req.body.likes;
+            const updatedLikes = yield (0, models_1.updateLikes)(id, likedId);
+            res.status(200).send(updatedLikes);
+        }
+        else
+            res.status(422).send({ message: "Invalid request, check submitted fields" });
+    }
+    catch (error) {
+        next(error);
+    }
+});
+exports.patchItem = patchItem;
