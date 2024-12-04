@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const model_1 = __importDefault(require("../schemas/model"));
 const api_json_1 = __importDefault(require("../../api.json"));
 const controllers_1 = require("../controllers/controllers");
 const router = express_1.default.Router();
@@ -54,19 +53,5 @@ router.patch("/settrade", controllers_1.patchTrade);
 //PATCH user items by adding a like
 router.patch("/items/:id", controllers_1.patchItem);
 //DELETE user by ID
-router.delete("/delete/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const id = req.params.id;
-        const data = yield model_1.default.findByIdAndDelete(id);
-        if (data) {
-            res.send(`Document with ${data.name} has been deleted.`);
-        }
-        else {
-            res.status(404).json({ message: "Document not found." });
-        }
-    }
-    catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-}));
+router.delete("/delete/:id", controllers_1.deleteUser);
 exports.default = router;

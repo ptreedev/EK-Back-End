@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.patchItem = exports.patchTrade = exports.createMatchesSubDoc = exports.postNewItem = exports.postNewUser = exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.deleteUser = exports.patchItem = exports.patchTrade = exports.createMatchesSubDoc = exports.postNewItem = exports.postNewUser = exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -245,5 +245,22 @@ const patchItem = (req, res, next) => __awaiter(void 0, void 0, void 0, function
     catch (error) {
         next(error);
     }
+    ;
 });
 exports.patchItem = patchItem;
+const deleteUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const deletedDocument = yield (0, models_1.deleteUserById)(id);
+        if (deletedDocument) {
+            res.status(204).send("Document with `${deletedDocument.name}` name deleted");
+        }
+        else {
+            res.status(404).json({ message: "Document not found." });
+        }
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+exports.deleteUser = deleteUser;

@@ -220,3 +220,8 @@ export const updateLikes = async (id: string, likedId: string) => {
     );
     return updatedLikes;
 };
+
+export const deleteUserById = async (id: string) => {
+    const deletedUser = await model.findByIdAndDelete(id);
+    return deletedUser;
+}

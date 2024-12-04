@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import model from "../schemas/model";
 import mongoose from "mongoose";
 import api from "../../api.json";
-import { createMatchesSubDoc, getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers, patchItem, patchTrade, postNewItem, postNewUser, postNewUsers } from "../controllers/controllers"
+import { createMatchesSubDoc, deleteUser, getAddresses, getItemById, getItems, getItemsByUsername, getLikesById, getMatches, getTrades, getUserById, getUserByUsername, getUsers, patchItem, patchTrade, postNewItem, postNewUser, postNewUsers } from "../controllers/controllers"
 const router = express.Router();
 
 // GET API endpoints
@@ -91,20 +91,8 @@ router.patch(
 
 //DELETE user by ID
 router.delete(
-  "/delete/:id",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const id = req.params.id;
-      const data = await model.findByIdAndDelete(id);
-      if (data) {
-        res.send(`Document with ${data.name} has been deleted.`);
-      } else {
-        res.status(404).json({ message: "Document not found." });
-      }
-    } catch (error) {
-      res.status(400).json({ message: (error as Error).message });
-    }
-  }
+  "/delete/:id", deleteUser
+
 );
 
 

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades, findMatches, insertUsers, createUser, createNewItem, createMatch, updateTrade, updateLikes } from "../models/models"
+import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades, findMatches, insertUsers, createUser, createNewItem, createMatch, updateTrade, updateLikes, deleteUserById } from "../models/models"
 import { Item, IUser } from "../schemas/model";
 import mongoose, { ObjectId } from "mongoose";
 
@@ -200,5 +200,19 @@ export const patchItem = async (req: Request, res: Response, next: NextFunction)
         } else res.status(422).send({ message: "Invalid request, check submitted fields" })
     } catch (error) {
         next(error)
+    };
+};
+
+export const deleteUser =   async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const {id} = req.params;
+      const deletedDocument = await deleteUserById(id)   
+      if (deletedDocument) {
+        res.status(204).send("Document with `${deletedDocument.name}` name deleted");
+      } else {
+        res.status(404).json({ message: "Document not found." });
+      }
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
     }
-}
+  }

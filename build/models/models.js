@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateLikes = exports.updateTrade = exports.createMatch = exports.createNewItem = exports.createUser = exports.insertUsers = exports.findMatches = exports.findAvailableTrades = exports.findMatchedAddresses = exports.findItems = exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
+exports.deleteUserById = exports.updateLikes = exports.updateTrade = exports.createMatch = exports.createNewItem = exports.createUser = exports.insertUsers = exports.findMatches = exports.findAvailableTrades = exports.findMatchedAddresses = exports.findItems = exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
 const model_1 = __importDefault(require("../schemas/model"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const selectUsers = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -213,3 +213,8 @@ const updateLikes = (id, likedId) => __awaiter(void 0, void 0, void 0, function*
     return updatedLikes;
 });
 exports.updateLikes = updateLikes;
+const deleteUserById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const deletedUser = yield model_1.default.findByIdAndDelete(id);
+    return deletedUser;
+});
+exports.deleteUserById = deleteUserById;
