@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades, findMatches, insertUsers, createUser, createNewItem, createMatch } from "../models/models"
+import { selectUsers, findUserById, findUserByUsername, findLikesById, findItemsByUsername, findItemById, findItems, findMatchedAddresses, findAvailableTrades, findMatches, insertUsers, createUser, createNewItem, createMatch, updateTrade } from "../models/models"
 import { Item, IUser } from "../schemas/model";
 import { create } from "domain";
 
@@ -174,5 +174,18 @@ export const createMatchesSubDoc = async (req: Request, res: Response, next: Nex
             res.status(422).send({ message: "Invalid request" })
         }
         next(error);
-    }
-}
+    };
+};
+
+export const patchTrade = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        if ((req.body.match_id === undefined || null) || (typeof req.body.bool !== "boolean")) {
+            res.status(422).send({ message: "Invalid request, check submitted fields" })
+        }
+        const { match_id, bool } = req.body;
+        const updatedTrade = await updateTrade(match_id, bool);
+        res.status(200).json(updatedTrade);
+    } catch (error) {
+        next(error);
+    };
+};

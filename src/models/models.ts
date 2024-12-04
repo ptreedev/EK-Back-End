@@ -196,3 +196,16 @@ export const createMatch = async (user: string, item: string) => {
         return "not modified";
     };
 };
+
+export const updateTrade = async (match_id: string, bool: boolean) => {
+    const changedBool = await model.findOneAndUpdate(
+        { "matches._id": match_id },
+        { $set: { "matches.$.settrade": bool } },
+        { new: true }
+    );
+    if (changedBool === null) {
+        const e = new Error();
+        e.name = "ValidationError";
+        throw e;
+    } else return changedBool;
+}

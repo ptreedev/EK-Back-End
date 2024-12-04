@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createMatch = exports.createNewItem = exports.createUser = exports.insertUsers = exports.findMatches = exports.findAvailableTrades = exports.findMatchedAddresses = exports.findItems = exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
+exports.updateTrade = exports.createMatch = exports.createNewItem = exports.createUser = exports.insertUsers = exports.findMatches = exports.findAvailableTrades = exports.findMatchedAddresses = exports.findItems = exports.findItemById = exports.findItemsByUsername = exports.findLikesById = exports.findUserByUsername = exports.findUserById = exports.selectUsers = void 0;
 const model_1 = __importDefault(require("../schemas/model"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const selectUsers = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -195,3 +195,14 @@ const createMatch = (user, item) => __awaiter(void 0, void 0, void 0, function* 
     ;
 });
 exports.createMatch = createMatch;
+const updateTrade = (match_id, bool) => __awaiter(void 0, void 0, void 0, function* () {
+    const changedBool = yield model_1.default.findOneAndUpdate({ "matches._id": match_id }, { $set: { "matches.$.settrade": bool } }, { new: true });
+    if (changedBool === null) {
+        const e = new Error();
+        e.name = "ValidationError";
+        throw e;
+    }
+    else
+        return changedBool;
+});
+exports.updateTrade = updateTrade;

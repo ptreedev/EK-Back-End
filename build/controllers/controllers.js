@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createMatchesSubDoc = exports.postNewItem = exports.postNewUser = exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
+exports.patchTrade = exports.createMatchesSubDoc = exports.postNewItem = exports.postNewUser = exports.postNewUsers = exports.getMatches = exports.getTrades = exports.getAddresses = exports.getItems = exports.getItemById = exports.getItemsByUsername = exports.getLikesById = exports.getUserByUsername = exports.getUserById = exports.getUsers = void 0;
 const models_1 = require("../models/models");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -213,5 +213,21 @@ const createMatchesSubDoc = (req, res, next) => __awaiter(void 0, void 0, void 0
         }
         next(error);
     }
+    ;
 });
 exports.createMatchesSubDoc = createMatchesSubDoc;
+const patchTrade = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if ((req.body.match_id === undefined || null) || (typeof req.body.bool !== "boolean")) {
+            res.status(422).send({ message: "Invalid request, check submitted fields" });
+        }
+        const { match_id, bool } = req.body;
+        const updatedTrade = yield (0, models_1.updateTrade)(match_id, bool);
+        res.status(200).json(updatedTrade);
+    }
+    catch (error) {
+        next(error);
+    }
+    ;
+});
+exports.patchTrade = patchTrade;

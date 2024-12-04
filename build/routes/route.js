@@ -51,26 +51,7 @@ router.post("/items/:username", controllers_1.postNewItem);
 //checks whether a match has occured and if true, creates a match subdocument
 router.post("/matchcheck", controllers_1.createMatchesSubDoc);
 //PATCH set a trade accept boolean in a users matches subdocument
-router.patch("/settrade", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        if ((req.body.match_id === undefined || null) || (typeof req.body.bool !== "boolean")) {
-            res.status(422).send({ message: "Invalid request, check submitted fields" });
-        }
-        const match_id = new mongoose_1.default.Types.ObjectId(`${req.body.match_id}`);
-        const val = req.body.bool;
-        const options = { new: true };
-        const changeBool = yield model_1.default.findOneAndUpdate({ "matches._id": match_id }, { $set: { "matches.$.settrade": val } }, options);
-        if (changeBool === null) {
-            const e = new Error();
-            e.name = "ValidationError";
-            throw e;
-        }
-        res.status(200).json(changeBool);
-    }
-    catch (error) {
-        next(error);
-    }
-}));
+router.patch("/settrade", controllers_1.patchTrade);
 //PATCH user items by adding a like
 router.patch("/items/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
