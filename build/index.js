@@ -35,7 +35,7 @@ app.use((error, req, res, next) => {
         next(error);
 });
 app.use((error, req, res, next) => {
-    if (error.name === "BSONError") {
+    if (error.name === "BSONError" || error.name === "CastError") {
         res.status(400).json({ message: "Not a valid ID" });
     }
     else

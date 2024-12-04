@@ -166,5 +166,28 @@
       "settrade": "true",
       "_id": "673711dd9c99a216961694ea"
     }]
+  },
+  {
+    "name": "TestUser2",
+    "username": "testuserTwo",
+    "items": [
+      {
+        "item_name": "carrot",
+        "description": "To see in the dark",
+        "img_string": "https://www.telegraph.co.uk/content/dam/health-fitness/2024/07/02/TELEMMGLPICT000384087606_17199393672240_trans_NvBQzQNjv4BqpVlberWd9EgFPZtcLiMQf0Rf_Wk3V23H2268P_XkPxc.jpeg?imwidth=680",
+        "likes": [],
+        "_id": "675035be2c9575f4434bf6b3"
+      }
+    ],
+    "address": [
+      {
+        "street": "8 Downing Street",
+        "city": "Liverpool",
+        "post_code": "SW3A 5AA",
+        "_id": "675035be2c9575f4434bf6b4"
+      }
+    ],
+    "matches": [],
+    "_id": "675035be2c9575f4434bf6b2"
   }
 ]

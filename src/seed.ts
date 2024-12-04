@@ -1,5 +1,5 @@
 import data from "../usertestdata.json";
-import model from "./models/model";
+import model from "./schemas/model";
 
 export default async function seed() {
   try {

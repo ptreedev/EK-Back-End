@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = seed;
 const usertestdata_json_1 = __importDefault(require("../usertestdata.json"));
-const model_1 = __importDefault(require("./models/model"));
+const model_1 = __importDefault(require("./schemas/model"));
 function seed() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

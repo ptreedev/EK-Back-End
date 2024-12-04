@@ -161,18 +161,28 @@ describe("PATCH: /api/items/:id", () => {
             })
             .expect(400)
             .then(({ body }) => {
-                expect(body.message).toBe("input must be a 24 character hex string, 12 byte Uint8Array, or an integer")
+                expect(body.message).toBe("Not a valid ID")
+            });
+    });
+    it("400: Returns an error when likes id is incorrect", async () => {
+        await request(app)
+            .patch("/api/items/60c72b2f9b1e8a4f10b7b1fc")
+            .send({
+                likes: "banana"
+            })
+            .expect(400)
+            .then(({ body }) => {
+                expect(body.message).toBe("Not a valid ID")
             });
     });
     it("422: returns an error when item body is missing / does not contain correct properties/values", async () => {
         await request(app)
             .patch("/api/items/60c72b2f9b1e8a4f10b7b202")
             .send({
-                likes: "banana"
             })
             .expect(422)
             .then(({ body }) => {
-                expect(body.message).toBe("Invalid request");
+                expect(body.message).toBe("Invalid request, check submitted fields");
             });
     });
 
